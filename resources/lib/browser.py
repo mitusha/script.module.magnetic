@@ -2,19 +2,21 @@
 
 import re
 import urllib2
-from cookielib import LWPCookieJar
+from cookielib import Cookie, LWPCookieJar
 from os import path
-from time import sleep
+from time import sleep, time
 from urllib import urlencode, quote
 from urlparse import urlparse
 
 from xbmc import translatePath
 
+import xbmcaddon
 import logger
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36" \
              " (KHTML, like Gecko) Chrome/30.0.1599.66 Safari/537.36"
 PATH_TEMP = translatePath("special://temp")
+CLEARANCE = None
 
 
 # provider web browser with cookies management
@@ -31,7 +33,6 @@ class Browser:
 
     @classmethod
     def create_cookies(cls, payload):
-
         cls._cookies = urlencode(payload)
 
     @classmethod
@@ -48,6 +49,36 @@ class Browser:
                 cls.cookies.load(cls.cookies_filename)
             except:
                 pass
+
+        # Check for cf_clearance cookie
+        if not any(cookie.name == 'cf_clearance' for cookie in cls.cookies):
+            global USER_AGENT
+            global CLEARANCE
+            # Check Quasar's CloudHole settings
+            cloudhole_key = xbmcaddon.Addon('plugin.video.quasar').getSetting('cloudhole_key')
+            if cloudhole_key and CLEARANCE is None:
+                try:
+                    r = urllib2.Request("https://cloudhole.herokuapp.com/clearances")
+                    r.add_header('Content-type', 'application/json')
+                    r.add_header('Authorization', cloudhole_key)
+                    res = urllib2.urlopen(r)
+                    content = res.read()
+                    logger.log.debug("CloudHole returned: %s" % content)
+                    import json
+                    data = json.loads(content)
+                    USER_AGENT = data[0]['userAgent']
+                    CLEARANCE = data[0]['cookies']
+                    logger.log.debug("New UA and clearance: %s / %s" % (USER_AGENT, CLEARANCE))
+                except Exception as e:
+                    logger.log.debug("CloudHole error: %s" % repr(e))
+                    pass
+            if CLEARANCE:
+                t = str(int(time()) + 604800)
+                c = Cookie(None, 'cf_clearance', CLEARANCE[13:], None, False,
+                           '.{uri.netloc}'.format(uri=urlparse(url)), True, True,
+                           '/', True, False, t, False, None, None, None, False)
+                cls.cookies.set_cookie(c)
+
         if post_data is None:
             post_data = {}
         if get_data is not None:
@@ -57,6 +88,7 @@ class Browser:
         if len(post_data) > 0:
             cls.create_cookies(post_data)
         if cls._cookies is not None:
+            logger.log.warning("Using cls._cookies for %s" % url)
             req = urllib2.Request(url, cls._cookies)
             cls._cookies = None
         else:
@@ -64,12 +96,16 @@ class Browser:
         req.add_header('User-Agent', USER_AGENT)
         req.add_header('Content-Language', language)
         req.add_header("Accept-Encoding", "gzip")
+        logger.log.debug("Cookies: %s" % repr(cls.cookies))
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cls.cookies))  # open cookie jar
         try:
             sleep(0.5)  # good spider
             response = opener.open(req)  # send cookies and open url
             cls.headers = response.headers
-            cls.cookies.save(cls.cookies_filename)
+            try:
+                cls.cookies.save(cls.cookies_filename)
+            except:
+                pass
             # borrow from provider.py Steeve
             if response.headers.get("Content-Encoding", "") == "gzip":
                 import zlib
@@ -83,16 +119,9 @@ class Browser:
         except urllib2.HTTPError as e:
             cls.status = e.code
             logger.log.warning("Status: " + str(cls.status))
+            if e.code == 403:
+                logger.log.warning("CloudFlared at %s" % url)
             result = False
-            if e.code == 503:
-                # trying to open with antibots tool
-                sleep(0.5)  # good spider
-                import cfscrape
-                scraper = cfscrape.create_scraper()  # returns a CloudflareScraper instance
-                cls.content = scraper.get(url).content
-                cls.status = 200
-                logger.log.warning("Trying antibot's measure")
-                result = True
         except urllib2.URLError as e:
             cls.status = e.reason
             logger.log.warning("Status: " + str(cls.status))
