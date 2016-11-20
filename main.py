@@ -32,6 +32,7 @@ def erase():
 
 # Mode Menu
 if mode == 'search':
+    xbmcplugin.endOfDirectory(addon_handle, True, False, False)
     search(query)
 
 elif mode == 'provider':
