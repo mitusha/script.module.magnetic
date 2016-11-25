@@ -5,21 +5,19 @@
 import re
 import sys
 import urllib2
-from cookielib import CookieJar, LWPCookieJar
+from cookielib import CookieJar
 from os import path
-from time import sleep
-from urllib import unquote_plus, urlencode, quote, quote_plus
+from urllib import unquote_plus, quote_plus
 from urlparse import urlparse
 
 import xbmcaddon
 
+from browser import Browser
 from ehp import *
 from storage import *
 from utils import PROVIDER_SERVICE_HOST, PROVIDER_SERVICE_PORT
-from utils import get_setting, get_int, get_float, notify
+from utils import get_setting, get_int, get_float
 
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36" \
-             " (KHTML, like Gecko) Chrome/30.0.1599.66 Safari/537.36"
 Html()
 COOKIES = CookieJar()
 urllib2.install_opener(urllib2.build_opener(urllib2.HTTPCookieProcessor(COOKIES)))
@@ -53,109 +51,6 @@ def register(search, search_movie, search_episode, search_season):
 
     request_url = urllib2.Request(callback, results)
     urllib2.urlopen(request_url, timeout=60)
-
-
-# provider web browser with cookies management
-class Browser:
-    def __init__(self):
-        pass
-
-    _cookies = None
-    cookies = LWPCookieJar()
-    content = None
-    status = None
-    headers = dict()
-
-    @classmethod
-    def create_cookies(cls, payload):
-
-        cls._cookies = urlencode(payload)
-
-    # to open any web page
-    @classmethod
-    def open(cls, url='', language='en', post_data=None, get_data=None):
-        if post_data is None:
-            post_data = {}
-        if get_data is not None:
-            url += '?' + urlencode(get_data)
-        logger.log.debug(url)
-        result = True
-        if len(post_data) > 0:
-            cls.create_cookies(post_data)
-        if cls._cookies is not None:
-            req = urllib2.Request(url, cls._cookies)
-            cls._cookies = None
-        else:
-            req = urllib2.Request(url)
-        req.add_header('User-Agent', USER_AGENT)
-        req.add_header('Content-Language', language)
-        req.add_header("Accept-Encoding", "gzip")
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cls.cookies))  # open cookie jar
-        try:
-            sleep(0.5)  # good spider
-            response = opener.open(req)  # send cookies and open url
-            cls.headers = response.headers
-            # borrow from provider.py Steeve
-            if response.headers.get("Content-Encoding", "") == "gzip":
-                import zlib
-                cls.content = zlib.decompressobj(16 + zlib.MAX_WBITS).decompress(response.read())
-            else:
-                cls.content = response.read()
-            response.close()
-            cls.status = 200
-            logger.log.debug("Status: " + str(cls.status))
-            logger.log.debug(cls.content)
-        except urllib2.HTTPError as e:
-            cls.status = e.code
-            logger.log.warning("Status: " + str(cls.status))
-            result = False
-            if e.code == 503:
-                # trying to open with antibots tool
-                sleep(0.5)  # good spider
-                import cfscrape
-                scraper = cfscrape.create_scraper()  # returns a CloudflareScraper instance
-                cls.content = scraper.get(url).content
-                cls.status = 200
-                notify("Antibot's  measure for %s" % url)
-                logger.log.warning("Trying antibot's measure")
-                result = True
-        except urllib2.URLError as e:
-            cls.status = e.reason
-            logger.log.warning("Status: " + str(cls.status))
-            if '[Errno 1]' in cls.status:
-                notify('obsolete Kodi version to open %s' % url)
-            result = False
-        return result
-
-    # alternative when it is problem with https
-    @classmethod
-    def open2(cls, url=''):
-        import httplib
-
-        word = url.split("://")
-        pos = word[1].find("/")
-        conn = httplib.HTTPConnection(re.search[:pos])
-        conn.request("GET", re.search[pos:])
-        r1 = conn.getresponse()
-        cls.status = str(r1.status) + " " + r1.reason
-        cls.content = r1.read()
-        if r1.status == 200:
-            return True
-        else:
-            return False
-
-    # used for sites with login
-    @classmethod
-    def login(cls, url, payload, word):
-        result = False
-        cls.create_cookies(payload)
-        if cls.open(url):
-            result = True
-            data = cls.content
-            if word in data:
-                cls.status = 'Wrong Username or Password'
-                result = False
-        return result
 
 
 # find the name in different language
@@ -230,22 +125,6 @@ def clean_magnet(magnet="", info_hash=""):
     return magnet
 
 
-# get the first magnet or torrent from one webpage
-def get_links(page):
-    result = ''
-    if page is not None:
-        page = add_base_url(page)
-        if Browser.open(quote(page).replace("%3A", ":")):
-            content = re.findall('magnet:\?[^\'"\s<>\[\]]+', Browser.content)
-            if content is not None and len(content) > 0:
-                result = content[0]
-            else:
-                content = re.findall('http(.*?).torrent', Browser.content)
-                if content is not None and len(content) > 0:
-                    result = 'http' + content[0] + '.torrent'
-    return result
-
-
 # noinspection PyBroadException
 def get_playable_link(page):
     page = normalize_string(page)
@@ -298,8 +177,8 @@ def parse_json(data):
 
 
 def parse_xml(data):
-    import xml.etree.ElementTree as eT
-    return eT.fromstring(data)
+    import xml.etree.ElementTree
+    return xml.etree.ElementTree.fromstring(data)
 
 
 def exception(title):
@@ -349,16 +228,16 @@ class MetaSettings(type):
             return mcs.value.get(item, "")
 
     # General information
-    idAddon = xbmcaddon.Addon().getAddonInfo('ID')  # gets name
+    id_addon = xbmcaddon.Addon().getAddonInfo('ID')  # gets name
     icon = xbmcaddon.Addon().getAddonInfo('icon')
     fanart = xbmcaddon.Addon().getAddonInfo('fanart')
     path_folder = xbmcaddon.Addon().getAddonInfo('path')
     name = xbmcaddon.Addon().getAddonInfo('name')  # gets name
     name_provider = re.sub('.COLOR (.*?)]', '', name.replace('[/COLOR]', ''))
     value = {}  # it contains all the settings from xml file
-    fileName = path.join(path_folder, "resources", "settings.xml")
-    if path.isfile(fileName):
-        with open(fileName, 'r') as fp:
+    file_name = path.join(path_folder, "resources", "settings.xml")
+    if path.isfile(file_name):
+        with open(file_name, 'r') as fp:
             data = fp.read()
         for key in re.findall('id="(\w+)"', data):
             value[key] = get_setting(key)  # reading the values from xbmcaddon.Addon().xml
@@ -587,25 +466,6 @@ class Filtering:
         return result
 
 
-class Magnet:
-    def __init__(self, magnet):
-        self.magnet = magnet + '&'
-        # hash
-        info_hash = re.search('urn:btih:(.*?)&', self.magnet)
-        result = ''
-        if info_hash is not None:
-            result = info_hash.group(1)
-        self.hash = result
-        # name
-        name = re.search('dn=(.*?)&', self.magnet)
-        result = ''
-        if name is not None:
-            result = name.group(1).replace('+', ' ')
-        self.name = result.title()
-        # trackers
-        self.trackers = re.findall('tr=(.*?)&', self.magnet)
-
-
 def generate_payload(generator=None, verify_name=True, verify_size=True):
     Filtering.information()  # print filters xbmcaddon.Addon()
     results = []
@@ -620,7 +480,8 @@ def generate_payload(generator=None, verify_name=True, verify_size=True):
         if Filtering.verify(v_name, v_size):
             cont += 1
             if Settings["read_magnet_link"] == "true":
-                magnet = get_links(magnet)  # magnet
+                magnetic_url = "http://%s:%s/" % (str(PROVIDER_SERVICE_HOST), str(PROVIDER_SERVICE_PORT))
+                magnet = magnetic_url + quote_plus(magnet) + '.torrent'  # magnet
             results.append({"name": name,
                             "uri": magnet,
                             "info_hash": info_hash,

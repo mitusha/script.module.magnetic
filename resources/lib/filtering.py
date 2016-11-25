@@ -1,5 +1,6 @@
 import logger
-from utils import Magnet, get_float
+from browser import Magnet
+from utils import get_float
 
 
 # filter results

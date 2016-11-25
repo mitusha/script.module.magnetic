@@ -125,25 +125,6 @@ def string(id_value):
     return xbmcaddon.Addon().getLocalizedString(id_value)
 
 
-class Magnet:
-    def __init__(self, magnet):
-        self.magnet = magnet + '&'
-        # hash
-        info_hash = re.search('urn:btih:(.*?)&', self.magnet)
-        result = ''
-        if info_hash is not None:
-            result = info_hash.group(1)
-        self.info_hash = result
-        # name
-        name = re.search('dn=(.*?)&', self.magnet)
-        result = ''
-        if name is not None:
-            result = name.group(1).replace('+', ' ')
-        self.name = result.title()
-        # trackers
-        self.trackers = re.findall('tr=(.*?)&', self.magnet)
-
-
 def get_int(text):
     return int(get_float(text))
 

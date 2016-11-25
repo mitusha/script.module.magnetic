@@ -4,6 +4,7 @@ from threading import Thread
 from urllib import quote_plus, unquote_plus
 
 import filtering
+from browser import read_torrent
 from storage import *
 from utils import *
 
@@ -11,6 +12,16 @@ provider_results = []
 provider_name = []
 available_providers = 0
 request_time = time.clock()
+
+
+# return the torrent information from the page
+def get_torrent(self):
+    path = self.path[1:-8]
+    return read_torrent(unquote_plus(path))
+
+
+def get_filename(self):
+    return unquote_plus(self.path[1:]).replace('/', '-')
 
 
 # provider call back with results

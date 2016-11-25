@@ -21,23 +21,26 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 class ProvidersHandler(BaseHTTPRequestHandler):
     def _write_headers(self):
         self.send_response(200)
-        self.send_header('Content-type', 'application/json')
+        if self.path.endswith(".torrent"):
+            self.send_header('Content-type', 'application/x-bittorrent')
+            self.send_header('Content-Disposition', 'attachment; filename="%s"' % magnetic.get_filename(self))
+            self.send_header('Content-Transfer-Encoding', 'binary')
+            self.send_header('Accept-Ranges', 'bytes')
+        else:
+            self.send_header('Content-type', 'application/json')
         self.end_headers()
-
-    def log_message(self, format_message, *args):
-        pass
 
     def do_HEAD(self):
         self._write_headers()
 
-    # provider addon callback to append results to response
+    # provider add-on callback to append results to response
     def do_POST(self):
         magnetic.process_provider(self)
 
-    # kodi call to get results
+    # Kodi call to get results
     def do_GET(self):
         self._write_headers()
-        self.wfile.write(magnetic.get_results(self))
+        self.wfile.write(magnetic.get_torrent(self) if self.path.endswith(".torrent") else magnetic.get_results(self))
 
 
 if __name__ == '__main__':
