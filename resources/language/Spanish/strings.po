@@ -21,279 +21,284 @@ msgstr ""
 #: setting.xml
 msgctxt "#32000"
 msgid "Login"
-msgstr "Iniciar Sesion"
-
+msgstr "Iniciar Sesión"
+ 
 #: settings.xml
 msgctxt "#32001"
 msgid "General"
 msgstr "General"
-
+ 
 #: settings.xml
 msgctxt "#32002"
 msgid "TV Shows"
 msgstr "Series de TV"
-
+ 
 #: settings.xml
 msgctxt "#32003"
 msgid "Anime"
 msgstr "Anime"
-
+ 
 #: settings.xml
 msgctxt "#32004"
 msgid "Seasons"
 msgstr "Temporadas"
-
+ 
 #: settings.xml
 msgctxt "#32005"
 msgid "Download"
 msgstr "Descargar"
-
+ 
 #: settings.xml
 msgctxt "#32006"
 msgid "HTML parsing"
 msgstr "Análisis de HTML"
-
+ 
 #: setting.xml
 msgctxt "#32015"
 msgid "Username:"
-msgstr "Nombre de usuario:"
-
+msgstr "Nombre de Usuario:"
+ 
 #: setting.xml
 msgctxt "#32016"
 msgid "Password:"
 msgstr "Contraseña:"
-
+ 
 #: setting.xml
 msgctxt "#32020"
 msgid "URL address (ex:http://www.example.com):"
-msgstr "la dirección URL (por ejemplo: http: //www.example.com):"
-
+msgstr "Dirección URL (por ej: http://www.ejemplo.com):"
+ 
 #: settings.xml
 msgctxt "#32021"
 msgid "Separator between words"
 msgstr "Separador de palabras"
-
+ 
 #: settings.xml
 msgctxt "#32022"
 msgid "Query Formats"
-msgstr "Formatos de busqueda"
-
+msgstr "Formatos de consulta"
+ 
 #: settings.xml
 msgctxt "#32023"
 msgid "Query 1:"
-msgstr "Formato 1:"
-
+msgstr "Consulta 1:"
+ 
 #: settings.xml
 msgctxt "#32024"
 msgid "Query 2:"
-msgstr "Formato 2:"
-
+msgstr "Consulta 2:"
+ 
 #: settings.xml
 msgctxt "#32025"
 msgid "Query 3:"
-msgstr "Formato 3:"
-
+msgstr "Consulta 3:"
+ 
 #: settings.xml
 msgctxt "#32026"
 msgid "Query 4:"
-msgstr "Formato 4:"
-
+msgstr "Consulta 4:"
+ 
 #: settings.xml
 msgctxt "#32027"
 msgid "Query 5:"
-msgstr "Formato 5:"
-
+msgstr "Consulta 5:"
+ 
 #: settings.xml
 msgctxt "#32028"
 msgid "Keyword Filtering Files"
-msgstr "Palabras claves para el Filtraje de Archivos"
-
+msgstr "Palabras clave para el filtrado de archivos"
+ 
 #: settings.xml
 msgctxt "#32029"
 msgid "Filter by Title:"
 msgstr "Filtrar por titulo:"
-
+ 
 #: settings.xml
 msgctxt "#32030"
 msgid "Only Accept with:"
 msgstr "Aceptar solo con:"
-
+ 
 #: settings.xml
 msgctxt "#32031"
 msgid "Block with:"
 msgstr "Bloquear con:"
-
+ 
 #: settings.xml
 msgctxt "#32032"
 msgid "Limitation Size"
-msgstr "Limitación de tamaño"
-
+msgstr "Limitación de tamaño:"
+ 
 #: settings.xml
 msgctxt "#32033"
 msgid "Minimum size:"
 msgstr "Tamaño mínimo:"
-
+ 
 #: settings.xml
 msgctxt "#32034"
 msgid "Maximum size:"
 msgstr "Tamaño máximo:"
-
+ 
 #: settings.xml
 msgctxt "#32040"
 msgid "Maximum torrents:"
-msgstr "Número de Torrentes:"
-
+msgstr "Numero máximo de torrents:"
+ 
 #: settings.xml
 msgctxt "#32050"
 msgid "Open subpage to get magnet information:"
-msgstr "Abrir la subpagina para conseguir la información de magnet:"
-
+msgstr "Abrir la subpágina para obtener información de magnet:"
+ 
 #: settings.xml
 msgctxt "#32051"
 msgid "Rows="
 msgstr "Filas="
-
+ 
 #: settings.xml
 msgctxt "#32052"
 msgid "Name="
 msgstr "Nombre="
-
+ 
 #: settings.xml
 msgctxt "#32053"
 msgid "Info Hash="
 msgstr "Info Hash="
-
+ 
 #: settings.xml
 msgctxt "#32054"
 msgid "Magnet="
 msgstr "Magnet="
-
+ 
 #: settings.xml
 msgctxt "#32055"
 msgid "Size="
 msgstr "Tamaño="
-
+ 
 #: settings.xml
 msgctxt "#32056"
 msgid "Seeds="
-msgstr "Seeds="
-
+msgstr "Semillas="
+ 
 #: settings.xml
 msgctxt "#32057"
 msgid "Peers="
-msgstr "Peers="
-
+msgstr "Pares="
+ 
 #: settings.xml
 msgctxt "#32060"
 msgid "No providers installed"
 msgstr "No hay proveedores instalados"
-
-#: settings.xml
-msgctxt "#32060"
-msgid "Starting..."
-msgstr "Comenzando..."
-
+ 
 #: settings.xml
 msgctxt "#32061"
-msgid "%s Providers Left"
-msgstr "% proveedores en espera"
-
+msgid "Starting..."
+msgstr "Empezando..."
+ 
 #: settings.xml
 msgctxt "#32062"
-msgid "1 Provider Left"
-msgstr "1 proveedor en espera"
-
+msgid "%s Providers Left"
+msgstr "Faltan % proveedores"
+ 
 #: settings.xml
 msgctxt "#32063"
+msgid "1 Provider Left"
+msgstr "Falta 1 proveedor"
+ 
+#: settings.xml
+msgctxt "#32064"
 msgid " working slow"
-msgstr "trabajan lento"
-
+msgstr "Trabajando lento"
+ 
+#: settings.xml
+msgctxt "#32065"
+msgid "Copying from cache"
+msgstr "Copiando del Cache"
+ 
 #: settings.xml
 msgctxt "#32070"
 msgid "Search Timeout Seconds"
-msgstr "Tiempo límite de la busqueda en Segundos"
-
+msgstr "Tiempo limite de la búsqueda en segundos"
+ 
 #: settings.xml
 msgctxt "#32071"
 msgid "Use Cache"
-msgstr "Utilizar Cache"
-
+msgstr "Usar Cache"
+ 
 #: settings.xml
 msgctxt "#32072"
 msgid "Clear Cache"
 msgstr "Limpiar el Cache"
-
+ 
 #: settings.xml
 msgctxt "#32073"
 msgid "Add-on to use:"
-msgstr "Extension a utilisar:"
-
+msgstr "Extensión a utilizar:"
+ 
 #: settings.xml
 msgctxt "#32074"
 msgid "Results for %s"
-msgstr "Resultados por %s"
-
+msgstr "Resultados para %"
+ 
 #: settings.xml
 msgctxt "#32075"
 msgid "No torrents found"
 msgstr "Ningún torrent encontrado"
-
+ 
 #: settings.xml
 msgctxt "#32080"
 msgid "Enable"
-msgstr "Activar"
-
+msgstr "Habilitar"
+ 
 #: settings.xml
 msgctxt "#32081"
 msgid "Disable"
-msgstr "Desactivar"
-
+msgstr "Deshabilitar"
+ 
 #: settings.xml
 msgctxt "#32082"
 msgid "Check"
-msgstr "Verificar"
-
+msgstr "Comprobar"
+ 
 #: settings.xml
 msgctxt "#32083"
 msgid "Check All Individually"
-msgstr "Verificar Todos Individualmente"
-
+msgstr "Comprobar todos individualmente"
+ 
 #: settings.xml
 msgctxt "#32084"
 msgid "Check All as Group"
-msgstr "Verificar Todos como Grupo"
-
+msgstr "Comprobar todos como grupo"
+ 
 #: settings.xml
 msgctxt "#32085"
 msgid "Enable All"
-msgstr "Activar Todos"
-
+msgstr "Habilitar todos"
+ 
 #: settings.xml
 msgctxt "#32086"
 msgid "Disable All"
-msgstr "Desactivar Todos"
-
+msgstr "Deshabilitar todos"
+ 
 #: settings.xml
 msgctxt "#32087"
 msgid "Copy Settings To..."
-msgstr "Copiar los parámetros a..."
-
+msgstr "Copiar configuración a..."
+ 
 #: settings.xml
 msgctxt "#32088"
 msgid "Apply default values"
-msgstr "Applicar los valores por defecto"
-
+msgstr "Aplicar los valores por defecto"
+ 
 #: settings.xml
 msgctxt "#32089"
 msgid "Add-on Settings"
-msgstr "Parametros de la extensión"
-
+msgstr "Configuración de la extensión"
+ 
 #: settings.xml
 msgctxt "#32090"
 msgid "ENABLED"
-msgstr "ACTIVADO"
-
+msgstr "HABILITADO"
+ 
 #: settings.xml
 msgctxt "#32091"
 msgid "DISABLED"
-msgstr "DESACTIVADO"
+msgstr "DESHABILITADO"
