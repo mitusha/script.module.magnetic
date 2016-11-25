@@ -129,6 +129,7 @@ def get_links(page=None):
             content = re.findall('http(.*?).torrent["\']', Browser.content)
             if content is not None and len(content) > 0:
                 result = 'http' + content[0] + '.torrent'
+                result = result.replace('torcache.net', 'itorrents.org')
             else:
                 content = re.findall('magnet:\?[^\'"\s<>\[\]]+', Browser.content)
                 if content is not None and len(content) > 0:
