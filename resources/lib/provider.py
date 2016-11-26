@@ -114,7 +114,7 @@ def add_base_url(url=''):
             url = Settings.url + url[1:]
         else:
             url = Settings.url + url
-    elif not url.startswith('http'):
+    elif not url.startswith('http') and not url.startswith('magnet:'):
         url = Settings.url + '/' + url
     return url
 
