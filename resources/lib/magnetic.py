@@ -20,7 +20,6 @@ def process_torrent(self):
     parsed = urlparse.urlparse(self.path)
     info = urlparse.parse_qs(parsed.query)
     uri = info.get('uri', [''])[0]
-    cookies = info.get('cookies', [''])[0]
     filename = uri if uri.endswith('.torrent') else uri + '.torrent'
     # headers
     self.send_response(200)
@@ -31,7 +30,7 @@ def process_torrent(self):
     self.end_headers()
 
     # torrent
-    self.wfile.write(read_torrent(unquote_plus(uri), cookies))
+    self.wfile.write(read_torrent(unquote_plus(uri)))
 
 
 # provider call back with results

@@ -114,6 +114,8 @@ def add_base_url(url=''):
             url = Settings.url + url[1:]
         else:
             url = Settings.url + url
+    elif not url.startswith('http'):
+        url = Settings.url + '/' + url
     return url
 
 
@@ -481,7 +483,7 @@ def generate_payload(generator=None, verify_name=True, verify_size=True):
             cont += 1
             if Settings["read_magnet_link"] == "true":
                 magnetic_url = "http://%s:%s/" % (str(PROVIDER_SERVICE_HOST), str(PROVIDER_SERVICE_PORT))
-                uri = "%s?uri=%s&cookies=%s" % (magnetic_url, quote_plus(uri), Browser.read_cookies())  # magnet
+                uri = "%s?uri=%s" % (magnetic_url, quote_plus(uri))  # magnet
             results.append({"name": name,
                             "uri": uri,
                             "info_hash": info_hash,

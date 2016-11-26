@@ -3,13 +3,19 @@
 import re
 import urllib2
 from cookielib import LWPCookieJar
+from os import path
 from time import sleep
 from urllib import urlencode, quote
 from urlparse import parse_qs
+from urlparse import urlparse
+
+from xbmc import translatePath
+
 import logger
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36" \
              " (KHTML, like Gecko) Chrome/30.0.1599.66 Safari/537.36"
+PATH_TEMP = translatePath("special://temp")
 
 
 # provider web browser with cookies management
@@ -22,6 +28,7 @@ class Browser:
     content = None
     status = None
     headers = dict()
+    cookies_filename = ''
 
     @classmethod
     def create_cookies(cls, payload):
@@ -35,6 +42,9 @@ class Browser:
     # to open any web page
     @classmethod
     def open(cls, url='', language='en', post_data=None, get_data=None):
+        cls.cookies_filename = path.join(PATH_TEMP, urlparse(url).netloc + '.jar')
+        if path.exists(cls.cookies_filename):
+            cls.cookies.load(cls.cookies_filename)
         if post_data is None:
             post_data = {}
         if get_data is not None:
@@ -56,6 +66,7 @@ class Browser:
             sleep(0.5)  # good spider
             response = opener.open(req)  # send cookies and open url
             cls.headers = response.headers
+            cls.cookies.save(cls.cookies_filename)
             # borrow from provider.py Steeve
             if response.headers.get("Content-Encoding", "") == "gzip":
                 import zlib
@@ -117,11 +128,11 @@ class Browser:
 
 
 # open torrent and return the information
-def read_torrent(uri='', cookies=''):
+def read_torrent(uri=''):
     result = ''
-    dict_cookies = parse_qs(cookies.replace(';', '&'))
     link = get_links(uri)
-    if Browser.open(link, post_data=dict_cookies):
+    print link
+    if Browser.open(link):
         result = Browser.content
     return result
 
@@ -129,7 +140,7 @@ def read_torrent(uri='', cookies=''):
 # get the first magnet or torrent from one webpage
 def get_links(uri=''):
     result = uri
-    if uri is not '' or not uri.endswith('.torrent'):
+    if uri is not '' and not uri.endswith('.torrent'):
         if Browser.open(quote(uri).replace("%3A", ":")):
             content = re.findall('magnet:\?[^\'"\s<>\[\]]+', Browser.content)
             if content is not None and len(content) > 0:
