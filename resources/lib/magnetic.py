@@ -49,7 +49,8 @@ def process_provider(self):
         "%.1f" % round(time.clock() - request_time, 2)) + " seconds")
     provider_results.extend(data)
     available_providers -= 1
-    provider_name.remove(addonid)
+    if addonid in provider_name:
+        provider_name.remove(addonid)
 
     # headers
     self.send_response(200)
