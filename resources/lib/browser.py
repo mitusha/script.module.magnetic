@@ -6,7 +6,6 @@ from cookielib import LWPCookieJar
 from os import path
 from time import sleep
 from urllib import urlencode, quote
-from urlparse import parse_qs
 from urlparse import urlparse
 
 from xbmc import translatePath
