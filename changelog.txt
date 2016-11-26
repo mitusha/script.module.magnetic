@@ -1,3 +1,4 @@
+v0.9.8 handle error cookies
 v0.9.7 fixing magnet:
 v0.9.6 cookies
 v0.9.5 torrent service

@@ -39,11 +39,15 @@ class Browser:
         return urlencode({cookie.name: cookie.value for cookie in cls.cookies}).replace('&', ';')
 
     # to open any web page
+    # noinspection PyBroadException
     @classmethod
     def open(cls, url='', language='en', post_data=None, get_data=None):
         cls.cookies_filename = path.join(PATH_TEMP, urlparse(url).netloc + '.jar')
         if path.exists(cls.cookies_filename):
-            cls.cookies.load(cls.cookies_filename)
+            try:
+                cls.cookies.load(cls.cookies_filename)
+            except:
+                pass
         if post_data is None:
             post_data = {}
         if get_data is not None:
