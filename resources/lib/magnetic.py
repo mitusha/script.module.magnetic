@@ -15,13 +15,23 @@ request_time = time.clock()
 
 
 # return the torrent information from the page
-def get_torrent(self):
-    path = self.path[1:-8]
-    return read_torrent(unquote_plus(path))
+def process_torrent(self):
+    # request data
+    parsed = urlparse.urlparse(self.path)
+    info = urlparse.parse_qs(parsed.query)
+    uri = info.get('uri', [''])[0]
+    cookies = info.get('cookies', [''])[0]
+    filename = uri if uri.endswith('.torrent') else uri + '.torrent'
+    # headers
+    self.send_response(200)
+    self.send_header('Content-type', 'application/x-bittorrent')
+    self.send_header('Content-Disposition', 'attachment; filename="%s"' % filename)
+    self.send_header('Content-Transfer-Encoding', 'binary')
+    self.send_header('Accept-Ranges', 'bytes')
+    self.end_headers()
 
-
-def get_filename(self):
-    return unquote_plus(self.path[1:]).replace('/', '-')
+    # torrent
+    self.wfile.write(read_torrent(unquote_plus(uri), cookies))
 
 
 # provider call back with results
@@ -29,18 +39,25 @@ def process_provider(self):
     global provider_results
     global available_providers
     global provider_name
+
+    # parsing path
     parsed = urlparse.urlparse(self.path)
     addonid = urlparse.parse_qs(parsed.query)['addonid'][0]
     content_length = int(self.headers['Content-Length'])
     payload = self.rfile.read(content_length)
-    self._write_headers()
-    self.wfile.write("OK")
     data = json.loads(payload)
     logger.log.info("Provider " + addonid + " returned " + str(len(data)) + " results in " + str(
         "%.1f" % round(time.clock() - request_time, 2)) + " seconds")
     provider_results.extend(data)
     available_providers -= 1
     provider_name.remove(addonid)
+
+    # headers
+    self.send_response(200)
+    self.send_header('Content-type', 'text/html')
+    self.end_headers()
+    # send ok
+    self.wfile.write("OK")
 
 
 def get_results(self):
@@ -51,7 +68,6 @@ def get_results(self):
 
     # request data
     parsed = urlparse.urlparse(self.path)
-
     info = urlparse.parse_qs(parsed.query)
     operation = info.get('search', [''])[0]
     provider = info.get('provider', [''])[0]
@@ -111,7 +127,13 @@ def get_results(self):
         display_message_cache()
 
     logger.log.info("Filtering returned: " + str(len(normalized_list.get('magnets', []))) + " results")
-    return json.dumps(normalized_list)
+
+    # headers
+    self.send_response(200)
+    self.send_header('Content-type', 'application/json')
+    self.end_headers()
+    # send the results
+    self.wfile.write(json.dumps(normalized_list))
 
 
 # search for torrents - call providers

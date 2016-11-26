@@ -50,7 +50,7 @@ def register(search, search_movie, search_episode, search_season):
         logger.log.error("Addon threw error:" + str(addonid))
 
     request_url = urllib2.Request(callback, results)
-    urllib2.urlopen(request_url, timeout=60)
+    urllib2.urlopen(request_url)
 
 
 # find the name in different language
@@ -470,20 +470,20 @@ def generate_payload(generator=None, verify_name=True, verify_size=True):
     Filtering.information()  # print filters xbmcaddon.Addon()
     results = []
     cont = 0
-    for name, info_hash, magnet, size, seeds, peers in generator:
+    for name, info_hash, uri, size, seeds, peers in generator:
         size = clean_size(size)
-        magnet = clean_magnet(magnet, info_hash)
+        uri = clean_magnet(uri, info_hash)
         v_name = name if verify_name else Filtering.title
         v_size = size if verify_size else None
         logger.log.debug("name: %s \n info_hash: %s\n magnet: %s\n size: %s\n seeds: %s\n peers: %s" % (
-            name, info_hash, magnet, size, seeds, peers))
+            name, info_hash, uri, size, seeds, peers))
         if Filtering.verify(v_name, v_size):
             cont += 1
             if Settings["read_magnet_link"] == "true":
                 magnetic_url = "http://%s:%s/" % (str(PROVIDER_SERVICE_HOST), str(PROVIDER_SERVICE_PORT))
-                magnet = magnetic_url + quote_plus(magnet) + '.torrent'  # magnet
+                uri = "%s?uri=%s&cookies=%s" % (magnetic_url, quote_plus(uri), Browser.read_cookies())  # magnet
             results.append({"name": name,
-                            "uri": magnet,
+                            "uri": uri,
                             "info_hash": info_hash,
                             "size": size,
                             "seeds": get_int(seeds),

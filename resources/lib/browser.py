@@ -5,7 +5,7 @@ import urllib2
 from cookielib import LWPCookieJar
 from time import sleep
 from urllib import urlencode, quote
-
+from urlparse import parse_qs
 import logger
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36" \
@@ -27,6 +27,10 @@ class Browser:
     def create_cookies(cls, payload):
 
         cls._cookies = urlencode(payload)
+
+    @classmethod
+    def read_cookies(cls):
+        return urlencode({cookie.name: cookie.value for cookie in cls.cookies}).replace('&', ';')
 
     # to open any web page
     @classmethod
@@ -113,27 +117,28 @@ class Browser:
 
 
 # open torrent and return the information
-def read_torrent(page=''):
+def read_torrent(uri='', cookies=''):
     result = ''
-    link = get_links(page)
-    if Browser.open(link):
+    dict_cookies = parse_qs(cookies.replace(';', '&'))
+    link = get_links(uri)
+    if Browser.open(link, post_data=dict_cookies):
         result = Browser.content
     return result
 
 
 # get the first magnet or torrent from one webpage
-def get_links(page=None):
-    result = ''
-    if page is not None:
-        if Browser.open(quote(page).replace("%3A", ":")):
-            content = re.findall('http(.*?).torrent["\']', Browser.content)
+def get_links(uri=''):
+    result = uri
+    if uri is not '' or not uri.endswith('.torrent'):
+        if Browser.open(quote(uri).replace("%3A", ":")):
+            content = re.findall('magnet:\?[^\'"\s<>\[\]]+', Browser.content)
             if content is not None and len(content) > 0:
-                result = 'http' + content[0] + '.torrent'
-                result = result.replace('torcache.net', 'itorrents.org')
+                result = 'http://itorrents.org/torrent/%s.torrent' % Magnet(content[0]).info_hash
             else:
-                content = re.findall('magnet:\?[^\'"\s<>\[\]]+', Browser.content)
+                content = re.findall('http(.*?).torrent["\']', Browser.content)
                 if content is not None and len(content) > 0:
-                    result = 'http://itorrents.org/torrent/%s.torrent ' % Magnet(content[0]).info_hash
+                    result = 'http' + content[0] + '.torrent'
+                    result = result.replace('torcache.net', 'itorrents.org')
     return result
 
 
@@ -141,7 +146,7 @@ class Magnet:
     def __init__(self, magnet):
         self.magnet = magnet + '&'
         # hash
-        info_hash = re.search('urn:btih:(.*?)&', self.magnet)
+        info_hash = re.search('urn:btih:(\w+)&', self.magnet, re.IGNORECASE)
         result = ''
         if info_hash is not None:
             result = info_hash.group(1)
