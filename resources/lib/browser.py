@@ -10,7 +10,6 @@ from urlparse import urlparse
 
 from xbmc import translatePath
 
-import xbmcaddon
 import logger
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36" \
@@ -21,41 +20,47 @@ CLEARANCE = None
 
 # provider web browser with cookies management
 class Browser:
+    """
+    Mini Web Browser
+    """
+
     def __init__(self):
         pass
 
-    _cookies = None
+    _counter = 0
+    _cookies_filename = ''
     cookies = LWPCookieJar()
     content = None
     status = None
     headers = dict()
-    cookies_filename = ''
+    
+    @classmethod
+    def _log_debug(cls, message=''):
+        logger.log.debug(message)
 
     @classmethod
-    def create_cookies(cls, payload):
-        cls._cookies = urlencode(payload)
+    def _log_warning(cls, message=''):
+        logger.log.warning(message)
 
     @classmethod
-    def read_cookies(cls):
-        return urlencode({cookie.name: cookie.value for cookie in cls.cookies}).replace('&', ';')
+    def _create_cookies(cls, payload):
+        return urlencode(payload)
 
-    # to open any web page
     # noinspection PyBroadException
     @classmethod
-    def open(cls, url='', language='en', post_data=None, get_data=None):
-        cls.cookies_filename = path.join(PATH_TEMP, urlparse(url).netloc + '.jar')
-        if path.exists(cls.cookies_filename):
+    def _read_cookies(cls, url='', cloudhole_key=None):
+        cls._cookies_filename = path.join(PATH_TEMP, urlparse(url).netloc + '.jar')
+        if path.exists(cls._cookies_filename):
             try:
-                cls.cookies.load(cls.cookies_filename)
+                cls.cookies.load(cls._cookies_filename)
             except:
                 pass
 
-        # Check for cf_clearance cookie
+        # Check for cf_clearance cookie provided by scakemyer
+        # https://github.com/scakemyer/cloudhole-api
         if not any(cookie.name == 'cf_clearance' for cookie in cls.cookies):
             global USER_AGENT
             global CLEARANCE
-            # Check Quasar's CloudHole settings
-            cloudhole_key = xbmcaddon.Addon('plugin.video.quasar').getSetting('cloudhole_key')
             if cloudhole_key and CLEARANCE is None:
                 try:
                     r = urllib2.Request("https://cloudhole.herokuapp.com/clearances")
@@ -63,14 +68,14 @@ class Browser:
                     r.add_header('Authorization', cloudhole_key)
                     res = urllib2.urlopen(r)
                     content = res.read()
-                    logger.log.debug("CloudHole returned: %s" % content)
+                    cls._log_debug("CloudHole returned: %s" % content)
                     import json
                     data = json.loads(content)
                     USER_AGENT = data[0]['userAgent']
                     CLEARANCE = data[0]['cookies']
-                    logger.log.debug("New UA and clearance: %s / %s" % (USER_AGENT, CLEARANCE))
+                    cls._log_debug("New UA and clearance: %s / %s" % (USER_AGENT, CLEARANCE))
                 except Exception as e:
-                    logger.log.debug("CloudHole error: %s" % repr(e))
+                    cls._log_debug("CloudHole error: %s" % repr(e))
                     pass
             if CLEARANCE:
                 t = str(int(time()) + 604800)
@@ -79,33 +84,62 @@ class Browser:
                            '/', True, False, t, False, None, None, None, False)
                 cls.cookies.set_cookie(c)
 
+    # noinspection PyBroadException
+    @classmethod
+    def _save_cookies(cls):
+        try:
+            cls.cookies.save(cls._cookies_filename)
+        except:
+            pass
+
+    # to avoid to call too many requests per second. Some pages start to block
+    @classmethod
+    def _good_spider(cls):
+        cls._counter += 1
+        if cls._counter > 1:
+            sleep(0.5)  # good spider
+
+    # to open any web page
+    @classmethod
+    def open(cls, url='', language='en', post_data=None, get_data=None):
+        """
+        Open a web page and returns its contents
+        :param url: url address web page
+        :type url: str
+        :param language: language encoding web page
+        :type language: str
+        :param post_data: parameters for POST request
+        :type post_data: dict
+        :param get_data: parameters for GET request
+        :type get_data: dict
+        :return: True if the web page was opened successfully. False, otherwise.
+        """
+        # Creating request
         if post_data is None:
             post_data = {}
         if get_data is not None:
             url += '?' + urlencode(get_data)
-        logger.log.debug(url)
+        cls._log_debug(url)
+
         result = True
-        if len(post_data) > 0:
-            cls.create_cookies(post_data)
-        if cls._cookies is not None:
-            logger.log.warning("Using cls._cookies for %s" % url)
-            req = urllib2.Request(url, cls._cookies)
-            cls._cookies = None
-        else:
-            req = urllib2.Request(url)
+        data = urlencode(post_data) if len(post_data) > 0 else None
+        req = urllib2.Request(url, data)
+
+        # Headers
         req.add_header('User-Agent', USER_AGENT)
         req.add_header('Content-Language', language)
         req.add_header("Accept-Encoding", "gzip")
-        logger.log.debug("Cookies: %s" % repr(cls.cookies))
+
+        # Cookies
+        cls._read_cookies(url)
+        cls._log_debug("Cookies: %s" % repr(cls.cookies))
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cls.cookies))  # open cookie jar
         try:
-            sleep(0.5)  # good spider
+            cls._good_spider()
             response = opener.open(req)  # send cookies and open url
             cls.headers = response.headers
-            try:
-                cls.cookies.save(cls.cookies_filename)
-            except:
-                pass
+            cls._save_cookies()
+
             # borrow from provider.py Steeve
             if response.headers.get("Content-Encoding", "") == "gzip":
                 import zlib
@@ -114,43 +148,35 @@ class Browser:
                 cls.content = response.read()
             response.close()
             cls.status = 200
-            logger.log.debug("Status: " + str(cls.status))
-            # logger.log.debug(str(cls.content))
+            cls._log_debug("Status: " + str(cls.status))
+            # cls._log_debug(str(cls.content))
         except urllib2.HTTPError as e:
             cls.status = e.code
-            logger.log.warning("Status: " + str(cls.status))
+            cls._log_warning("Status: " + str(cls.status))
             if e.code == 403:
-                logger.log.warning("CloudFlared at %s" % url)
+                cls._log_warning("CloudFlared at %s" % url)
             result = False
         except urllib2.URLError as e:
             cls.status = e.reason
-            logger.log.warning("Status: " + str(cls.status))
+            cls._log_warning("Status: " + str(cls.status))
             result = False
         return result
 
-    # alternative when it is problem with https
-    @classmethod
-    def open2(cls, url=''):
-        import httplib
-
-        word = url.split("://")
-        pos = word[1].find("/")
-        conn = httplib.HTTPConnection(re.search[:pos])
-        conn.request("GET", re.search[pos:])
-        r1 = conn.getresponse()
-        cls.status = str(r1.status) + " " + r1.reason
-        cls.content = r1.read()
-        if r1.status == 200:
-            return True
-        else:
-            return False
-
     # used for sites with login
     @classmethod
-    def login(cls, url, payload, word):
+    def login(cls, url='', payload=None, word=''):
+        """
+        Login to web site
+        :param url:  url address from web site
+        :type url: str
+        :param payload: parameters for the login request
+        :type payload: dict
+        :param word:  message from the web site when the login fails
+        :type word: str
+        :return: True if the login was successful. False, otherwise.
+        """
         result = False
-        cls.create_cookies(payload)
-        if cls.open(url):
+        if cls.open(url, post_data=payload):
             result = True
             data = cls.content
             if word in data:
@@ -161,16 +187,27 @@ class Browser:
 
 # open torrent and return the information
 def read_torrent(uri=''):
+    """
+    Copy a torrent file locally and returns its content
+    :param uri:  Uniform Resource Identifier for the torrent
+    :type uri: str
+    :return: Torrent file contents.
+    """
     result = ''
     link = get_links(uri)
-    print link
-    if Browser.open(link):
+    if len(link) > 0 and Browser.open(link):
         result = Browser.content
     return result
 
 
 # get the first magnet or torrent from one webpage
 def get_links(uri=''):
+    """
+    Find the magnet information or torrent from web page
+    :param uri:  Uniform Resource Identifier for the web page
+    :type uri: str
+    :return: the torrent file URI.
+    """
     result = uri
     if uri is not '' and not uri.endswith('.torrent'):
         if Browser.open(quote(uri).replace("%3A", ":")):
@@ -186,6 +223,10 @@ def get_links(uri=''):
 
 
 class Magnet:
+    """
+    Create Magnet object with its properties
+    """
+
     def __init__(self, magnet):
         self.magnet = magnet + '&'
         # hash

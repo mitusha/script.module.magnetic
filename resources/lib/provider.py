@@ -4,9 +4,8 @@
 
 import re
 import sys
-import json
-import logger
 import urllib2
+import xml.etree.ElementTree
 from cookielib import CookieJar
 from os import path
 from urllib import unquote_plus, quote_plus
@@ -179,7 +178,6 @@ def parse_json(data):
 
 
 def parse_xml(data):
-    import xml.etree.ElementTree
     return xml.etree.ElementTree.fromstring(data)
 
 
