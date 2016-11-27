@@ -4,6 +4,8 @@
 
 import re
 import sys
+import json
+import logger
 import urllib2
 from cookielib import CookieJar
 from os import path
@@ -169,12 +171,10 @@ def get_playable_link(page):
                 exceptions_list.sync()
         except:
             pass
-    logger.log.info(result)
     return quote_plus(page)
 
 
 def parse_json(data):
-    import json
     return json.loads(data)
 
 
