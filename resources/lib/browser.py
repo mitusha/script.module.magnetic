@@ -29,10 +29,19 @@ class Browser:
 
     _counter = 0
     _cookies_filename = ''
-    cookies = LWPCookieJar()
+    _cookies = LWPCookieJar()
+    cloudhole_key = None
     content = None
     status = None
     headers = dict()
+
+    @classmethod
+    def cookies(cls):
+        """
+        Cookies
+        :return: LWPCookieJar format.
+        """
+        return cls._cookies
     
     @classmethod
     def _log_debug(cls, message=''):
@@ -48,24 +57,24 @@ class Browser:
 
     # noinspection PyBroadException
     @classmethod
-    def _read_cookies(cls, url='', cloudhole_key=None):
+    def _read_cookies(cls, url=''):
         cls._cookies_filename = path.join(PATH_TEMP, urlparse(url).netloc + '.jar')
         if path.exists(cls._cookies_filename):
             try:
-                cls.cookies.load(cls._cookies_filename)
+                cls._cookies.load(cls._cookies_filename)
             except:
                 pass
 
         # Check for cf_clearance cookie provided by scakemyer
         # https://github.com/scakemyer/cloudhole-api
-        if not any(cookie.name == 'cf_clearance' for cookie in cls.cookies):
+        if not any(cookie.name == 'cf_clearance' for cookie in cls._cookies):
             global USER_AGENT
             global CLEARANCE
-            if cloudhole_key and CLEARANCE is None:
+            if cls.cloudhole_key and CLEARANCE is None:
                 try:
                     r = urllib2.Request("https://cloudhole.herokuapp.com/clearances")
                     r.add_header('Content-type', 'application/json')
-                    r.add_header('Authorization', cloudhole_key)
+                    r.add_header('Authorization', cls.cloudhole_key)
                     res = urllib2.urlopen(r)
                     content = res.read()
                     cls._log_debug("CloudHole returned: %s" % content)
@@ -82,13 +91,13 @@ class Browser:
                 c = Cookie(None, 'cf_clearance', CLEARANCE[13:], None, False,
                            '.{uri.netloc}'.format(uri=urlparse(url)), True, True,
                            '/', True, False, t, False, None, None, None, False)
-                cls.cookies.set_cookie(c)
+                cls._cookies.set_cookie(c)
 
     # noinspection PyBroadException
     @classmethod
     def _save_cookies(cls):
         try:
-            cls.cookies.save(cls._cookies_filename)
+            cls._cookies.save(cls._cookies_filename)
         except:
             pass
 
@@ -132,8 +141,8 @@ class Browser:
 
         # Cookies
         cls._read_cookies(url)
-        cls._log_debug("Cookies: %s" % repr(cls.cookies))
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cls.cookies))  # open cookie jar
+        cls._log_debug("Cookies: %s" % repr(cls._cookies))
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cls._cookies))  # open cookie jar
         try:
             cls._good_spider()
             response = opener.open(req)  # send cookies and open url
