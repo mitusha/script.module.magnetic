@@ -30,26 +30,31 @@ msgstr "Allgemein"
 
 #: settings.xml
 msgctxt "#32002"
+msgid "Movies"
+msgstr "Filme"
+
+#: settings.xml
+msgctxt "#32003"
 msgid "TV Shows"
 msgstr "TV-Serien"
 
 #: settings.xml
-msgctxt "#32003"
+msgctxt "#32004"
 msgid "Anime"
 msgstr "Anime"
 
 #: settings.xml
-msgctxt "#32004"
+msgctxt "#32005"
 msgid "Seasons"
 msgstr "Staffeln"
 
 #: settings.xml
-msgctxt "#32005"
+msgctxt "#32006"
 msgid "Download"
 msgstr "Herunterladen"
 
 #: settings.xml
-msgctxt "#32006"
+msgctxt "#32007"
 msgid "HTML parsing"
 msgstr "HTML-Parser"
 
@@ -142,6 +147,11 @@ msgstr "Maximale Größe:"
 msgctxt "#32040"
 msgid "Maximum torrents:"
 msgstr "Maximale Anzahl an Torrents:"
+
+#: settings.xml
+msgctxt "#32041"
+msgid "Use CloudHole:"
+msgstr "verwenden Sie CloudHole:"
 
 #: settings.xml
 msgctxt "#32050"

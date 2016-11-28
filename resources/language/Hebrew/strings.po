@@ -30,26 +30,31 @@ msgstr "כללי"
 
 #: settings.xml
 msgctxt "#32002"
+msgid "Movies"
+msgstr "סרטים"
+
+#: settings.xml
+msgctxt "#32003"
 msgid "TV Shows"
 msgstr "סדרות"
 
 #: settings.xml
-msgctxt "#32003"
+msgctxt "#32004"
 msgid "Anime"
 msgstr "אנימה"
 
 #: settings.xml
-msgctxt "#32004"
+msgctxt "#32005"
 msgid "Seasons"
 msgstr "עונות"
 
 #: settings.xml
-msgctxt "#32005"
+msgctxt "#32006"
 msgid "Download"
 msgstr "הורדה"
 
 #: settings.xml
-msgctxt "#32006"
+msgctxt "#32007"
 msgid "HTML parsing"
 msgstr "ניתוח HTML"
 
@@ -142,6 +147,11 @@ msgstr "גודל מקסימלי"
 msgctxt "#32040"
 msgid "Maximum torrents:"
 msgstr "כמות מרבית של טורנטים"
+
+#: settings.xml
+msgctxt "#32041"
+msgid "Use CloudHole:"
+msgstr "להשתמש CloudHole:"
 
 #: settings.xml
 msgctxt "#32050"

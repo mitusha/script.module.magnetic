@@ -517,9 +517,9 @@ def process(generator=None, verify_name=True, verify_size=True):
 
 def execute_process(generator=None, verify_name=True, verify_size=True):
     # get the cloudhole key
-    logger.log.debug("##############HERE")
-    Browser.get_cloudhole_key()
-    logger.log.debug(Browser.cloudhole_key)
+    if Settings["use_cloudhole"] == 'true':
+        Browser.get_cloudhole_key()
+
     # start the process
     for query in Filtering.queries:
         keywords = read_keywords(query)
