@@ -1,3 +1,4 @@
+v0.9.10 preparing for official release
 v0.9.9 syntax error spmc16
 v0.9.8 handle error cookies
 v0.9.7 fixing magnet:
