@@ -5,6 +5,7 @@
 import re
 import sys
 import urllib2
+import xml.etree.ElementTree
 from cookielib import CookieJar
 from os import path
 from urllib import unquote_plus, quote_plus
@@ -169,17 +170,14 @@ def get_playable_link(page):
                 exceptions_list.sync()
         except:
             pass
-    logger.log.info(result)
     return quote_plus(page)
 
 
 def parse_json(data):
-    import json
     return json.loads(data)
 
 
 def parse_xml(data):
-    import xml.etree.ElementTree
     return xml.etree.ElementTree.fromstring(data)
 
 
