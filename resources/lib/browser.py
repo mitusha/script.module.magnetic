@@ -12,7 +12,8 @@ if Browser.open(url):
 Using cloudhole
 Using with GET request
 url = "http://example.com"
-if Browser.open(url, use_cloudhole=True):
+Browser.get_cloudhole_key()
+if Browser.open(url):
     print Browser.content
 
 Using with GET request
@@ -47,6 +48,26 @@ PATH_TEMP = translatePath("special://temp")
 CLEARANCE = None
 
 
+def _log_debug(message=''):
+    """
+    Call Logger debug
+    :param message: message to the log
+    :type message: str
+    :return:
+    """
+    logger.log.debug(message)
+
+
+def _log_warning(message=''):
+    """
+    Call Logger warning
+    :param message: message to the log
+    :type message: str
+    :return:
+    """
+    logger.log.warning(message)
+
+
 class Browser:
     """
     Mini Web Browser with cookies handle
@@ -54,7 +75,7 @@ class Browser:
     _counter = 0
     _cookies_filename = ''
     _cookies = LWPCookieJar()
-    cloudhole_key = _get_cloudhole_key()
+    cloudhole_key = None
     content = None
     status = None
     headers = dict()
@@ -63,19 +84,11 @@ class Browser:
         pass
 
     @classmethod
-    def cookies(cls):
-        """
-        Cookies
-        :return: LWPCookieJar format.
-        """
-        return cls._cookies
-
-    @classmethod
     def _create_cookies(cls, payload):
         return urlencode(payload)
 
     @classmethod
-    def _read_cookies(cls, url='', use_cloudhole=False):
+    def _read_cookies(cls, url=''):
         cls._cookies_filename = path.join(PATH_TEMP, urlparse(url).netloc + '.jar')
         if path.exists(cls._cookies_filename):
             try:
@@ -86,7 +99,7 @@ class Browser:
 
         # Check for cf_clearance cookie provided by scakemyer
         # https://github.com/scakemyer/cloudhole-api
-        if use_cloudhole and not any(cookie.name == 'cf_clearance' for cookie in cls._cookies):
+        if not any(cookie.name == 'cf_clearance' for cookie in cls._cookies):
             global USER_AGENT
             global CLEARANCE
             if cls.cloudhole_key and CLEARANCE is None:
@@ -129,11 +142,36 @@ class Browser:
             sleep(0.5)  # good spider
 
     @classmethod
-    def open(cls, url='', language='en', post_data=None, get_data=None, use_cloudhole=False):
+    def cookies(cls):
+        """
+        Cookies
+        :return: LWPCookieJar format.
+        """
+        return cls._cookies
+
+    @classmethod
+    def get_cloudhole_key(cls):
+        """
+        Get the Cloudhole Key
+        """
+        cls.cloudhole_key = None
+        try:
+            r = urllib2.Request("https://cloudhole.herokuapp.com/key")
+            r.add_header('Content-type', 'application/json')
+            res = urllib2.urlopen(r)
+            content = res.read()
+            _log_debug("CloudHole returned: %s" % content)
+            data = json.loads(content)
+            cls.cloudhole_key = data['key']
+
+        except Exception as e:
+            _log_debug("Getting CloudHole Key error: %s" % repr(e))
+            pass
+
+    @classmethod
+    def open(cls, url='', language='en', post_data=None, get_data=None):
         """
         Open a web page and returns its contents
-        :param use_cloudhole: if cloudhole is used
-        :type use_cloudhole: bool
         :param url: url address web page
         :type url: str
         :param language: language encoding web page
@@ -161,7 +199,7 @@ class Browser:
         req.add_header("Accept-Encoding", "gzip")
 
         # Cookies
-        cls._read_cookies(url, use_cloudhole)
+        cls._read_cookies(url)
         _log_debug("Cookies: %s" % repr(cls._cookies))
         # open cookie jar
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cls._cookies))
@@ -259,46 +297,6 @@ def get_links(uri=''):
                 if content is not None and len(content) > 0:
                     result = 'http' + content[0] + '.torrent'
                     result = result.replace('torcache.net', 'itorrents.org')
-    return result
-
-
-def _log_debug(message=''):
-    """
-    Call Logger debug
-    :param message: message to the log
-    :type message: str
-    :return:
-    """
-    logger.log.debug(message)
-
-
-def _log_warning(message=''):
-    """
-    Call Logger warning
-    :param message: message to the log
-    :type message: str
-    :return:
-    """
-    logger.log.warning(message)
-
-
-def _get_cloudhole_key():
-    """
-    Get the Cloudhole Key
-    """
-    result = ''
-    try:
-        r = urllib2.Request("https://cloudhole.herokuapp.com/key")
-        r.add_header('Content-type', 'application/json')
-        res = urllib2.urlopen(r)
-        content = res.read()
-        _log_debug("CloudHole returned: %s" % content)
-        data = json.loads(content)
-        result = data['key']
-
-    except Exception as e:
-        _log_debug("Getting CloudHole Key error: %s" % repr(e))
-        pass
     return result
 
 

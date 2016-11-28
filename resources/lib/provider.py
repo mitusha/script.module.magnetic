@@ -170,7 +170,7 @@ def get_playable_link(page):
                 exceptions_list.sync()
         except:
             pass
-    return quote_plus(page)
+    return quote_plus(result)
 
 
 def parse_json(data):
@@ -571,5 +571,6 @@ def execute_process(generator=None, verify_name=True, verify_size=True):
                         data[key] = Filtering.get_data[key]
             Filtering.title = query  # to do filtering by name
             logger.log.debug(url_search)
+            Browser.get_cloudhole_key()
             Browser.open(url_search, post_data=payload, get_data=data)
             Filtering.results.extend(generate_payload(generator(Browser.content), verify_name, verify_size))
