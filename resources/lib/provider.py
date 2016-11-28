@@ -6,7 +6,6 @@ import re
 import sys
 import urllib2
 import xml.etree.ElementTree
-from cookielib import CookieJar
 from os import path
 from urllib import unquote_plus, quote_plus
 from urlparse import urlparse
@@ -20,8 +19,6 @@ from utils import PROVIDER_SERVICE_HOST, PROVIDER_SERVICE_PORT
 from utils import get_setting, get_int, get_float
 
 Html()
-COOKIES = CookieJar()
-urllib2.install_opener(urllib2.build_opener(urllib2.HTTPCookieProcessor(COOKIES)))
 
 
 # noinspection PyBroadException
@@ -519,6 +516,10 @@ def process(generator=None, verify_name=True, verify_size=True):
 
 
 def execute_process(generator=None, verify_name=True, verify_size=True):
+    # get the cloudhole key
+    Browser.get_cloudhole_key()
+
+    # start the process
     for query in Filtering.queries:
         keywords = read_keywords(query)
         for keyword in keywords:
@@ -547,6 +548,7 @@ def execute_process(generator=None, verify_name=True, verify_size=True):
                 else:
                     episode = '%s' % Filtering.info["episode"]
                 query = query.replace('{%s}' % keyword, '' + episode)
+
         if query is not '':
             # creating url
             url_search = Filtering.url.replace('QUERY', query.replace(' ', Settings['separator']))
@@ -569,8 +571,10 @@ def execute_process(generator=None, verify_name=True, verify_size=True):
                         data[key] = Filtering.get_data[key].replace('QUERY', query)
                     else:
                         data[key] = Filtering.get_data[key]
-            Filtering.title = query  # to do filtering by name
+            # to do filtering by name
+            Filtering.title = query
             logger.log.debug(url_search)
-            Browser.get_cloudhole_key()
+
+            # requesting the QUERY
             Browser.open(url_search, post_data=payload, get_data=data)
             Filtering.results.extend(generate_payload(generator(Browser.content), verify_name, verify_size))
