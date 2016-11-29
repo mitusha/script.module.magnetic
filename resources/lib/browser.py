@@ -45,7 +45,6 @@ import logger
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36" \
              " (KHTML, like Gecko) Chrome/30.0.1599.66 Safari/537.36"
 PATH_TEMP = translatePath("special://temp")
-CLEARANCE = None
 
 
 def _log_debug(message=''):
@@ -75,7 +74,8 @@ class Browser:
     _counter = 0
     _cookies_filename = ''
     _cookies = LWPCookieJar()
-    cloudhole_key = None
+    user_agent = USER_AGENT
+    clearance = None
     content = None
     status = None
     headers = dict()
@@ -99,30 +99,12 @@ class Browser:
 
         # Check for cf_clearance cookie provided by scakemyer
         # https://github.com/scakemyer/cloudhole-api
-        if not any(cookie.name == 'cf_clearance' for cookie in cls._cookies):
-            global USER_AGENT
-            global CLEARANCE
-            if cls.cloudhole_key and CLEARANCE is None:
-                try:
-                    r = urllib2.Request("https://cloudhole.herokuapp.com/clearances")
-                    r.add_header('Content-type', 'application/json')
-                    r.add_header('Authorization', cls.cloudhole_key)
-                    res = urllib2.urlopen(r)
-                    content = res.read()
-                    _log_debug("CloudHole returned: %s" % content)
-                    data = json.loads(content)
-                    USER_AGENT = data[0]['userAgent']
-                    CLEARANCE = data[0]['cookies']
-                    _log_debug("New UA and clearance: %s / %s" % (USER_AGENT, CLEARANCE))
-                except Exception as e:
-                    _log_debug("CloudHole error: %s" % repr(e))
-                    pass
-            if CLEARANCE:
-                t = str(int(time()) + 604800)
-                c = Cookie(None, 'cf_clearance', CLEARANCE[13:], None, False,
-                           '.{uri.netloc}'.format(uri=urlparse(url)), True, True,
-                           '/', True, False, t, False, None, None, None, False)
-                cls._cookies.set_cookie(c)
+        if cls.clearance and not any(cookie.name == 'cf_clearance' for cookie in cls._cookies):
+            t = str(int(time()) + 604800)
+            c = Cookie(None, 'cf_clearance', cls.clearance[13:], None, False,
+                       '.{uri.netloc}'.format(uri=urlparse(url)), True, True,
+                       '/', True, False, t, False, None, None, None, False)
+            cls._cookies.set_cookie(c)
 
     @classmethod
     def _save_cookies(cls):
@@ -181,7 +163,7 @@ class Browser:
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cls._cookies))
 
         # Headers
-        req.add_header('User-Agent', USER_AGENT)
+        req.add_header('User-Agent', cls.user_agent)
         req.add_header('Content-Language', language)
         req.add_header("Accept-Encoding", "gzip")
 
@@ -284,6 +266,7 @@ def get_links(uri=''):
 def get_cloudhole_key():
     """
     Get the Cloudhole Key
+    https://github.com/scakemyer/cloudhole-api
     """
     cloudhole_key = None
     try:
@@ -299,6 +282,34 @@ def get_cloudhole_key():
         _log_debug("Getting CloudHole Key error: %s" % repr(e))
         pass
     return cloudhole_key
+
+
+def get_cloudhole_clearance(cloudhole_key=None):
+    """
+    Define the clearance value and USER AGENT
+    https://github.com/scakemyer/cloudhole-api
+    :param cloudhole_key: key from cloudhole
+    :type  cloudhole_key: str
+    :return clearance, USER AGENT
+    """
+    user_agent = USER_AGENT
+    clearance = None
+    if cloudhole_key:
+        try:
+            r = urllib2.Request("https://cloudhole.herokuapp.com/clearances")
+            r.add_header('Content-type', 'application/json')
+            r.add_header('Authorization', cloudhole_key)
+            res = urllib2.urlopen(r)
+            content = res.read()
+            _log_debug("CloudHole returned: %s" % content)
+            data = json.loads(content)
+            user_agent = data[0]['userAgent']
+            clearance = data[0]['cookies']
+            _log_debug("New UA and clearance: %s / %s" % (user_agent, clearance))
+        except Exception as e:
+            _log_debug("CloudHole error: %s" % repr(e))
+            pass
+    return clearance, user_agent
 
 
 class Magnet:

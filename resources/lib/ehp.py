@@ -1,6 +1,8 @@
-# -*- coding: utf-8 -*-
-from HTMLParser import HTMLParser
-from collections import deque
+# coding: utf-8
+# Name:        ehp.py
+# Author:      Iury de oliveira gomes figueiredo and Mancuniancol
+# Created on:  28.11.2016
+# Licence:     GPL v.3: http://www.gnu.org/copyleft/gpl.html
 
 """"
 All the credit of this code to Iury de oliveira gomes figueiredo
@@ -8,6 +10,9 @@ Easy Html Parser is an AST generator for html/xml documents. You can easily dele
 documents as well as look for patterns.
 https://github.com/iogf/ehp
 """
+
+from HTMLParser import HTMLParser
+from collections import deque
 
 version = '1.3a'
 DATA = 1

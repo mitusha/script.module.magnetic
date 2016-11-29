@@ -6,5 +6,6 @@
         <setting label="32072" type="action" action="RunPlugin(plugin://script.module.magnetic?mode=clear_cache)"/>
         <setting label="32073" type="labelenum" id="plugin" default="YATP"
                  values="Quasar|Pulsar|KmediaTorrent|XBMCtorrent|Torrenter|YATP"/>
+        <setting label="32041" type="bool" id="use_cloudhole" default="false"/>
     </category>
 </settings>

@@ -1,4 +1,11 @@
 # coding: utf-8
+# Name:        main.py
+# Author:      Mancuniancol
+# Created on:  28.11.2016
+# Licence:     GPL v.3: http://www.gnu.org/copyleft/gpl.html
+"""
+Main Menu Magnetic
+"""
 
 import sys
 from os import path
@@ -27,6 +34,9 @@ query = args.get('query', '')
 
 # functions
 def erase():
+    """
+    Erase cache with the providers information
+    """
     Storage.open("providers").clear()
 
 
@@ -141,9 +151,11 @@ if len(mode) == 0:
                        provider['addonid'])]
         menu_enable = (utils.string(32081), 'XBMC.RunPlugin(plugin://script.module.magnetic?mode=disable&addonid=%s)' %
                        provider['addonid'])
+
         if not provider['enabled']:
             tag = '[B][COLOR FFC40401][%s] [/COLOR][/B]' % utils.string(32091)
-            menu_enable = (utils.string(32080), 'XBMC.RunPlugin(plugin://script.module.magnetic?mode=enable&addonid=%s)' %
+            menu_enable = (utils.string(32080),
+                           'XBMC.RunPlugin(plugin://script.module.magnetic?mode=enable&addonid=%s)' %
                            provider['addonid'])
             menu_check = []
         speed = speed_providers.get(provider['addonid'], '')
@@ -153,8 +165,10 @@ if len(mode) == 0:
         list_item.setArt({'thumb': icon,
                           'icon': icon,
                           'fanart': fanart})
+
         if provider['enabled']:
             url = base_url + '?mode=provider&addonid=%s' % provider['addonid']
+
         else:
             url = ''
         is_folder = False
@@ -180,4 +194,5 @@ if len(mode) == 0:
     xbmcplugin.addDirectoryItems(addon_handle, listing, len(listing))
     xbmcplugin.addSortMethod(addon_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(addon_handle, updateListing=True)
+
 del speed_providers

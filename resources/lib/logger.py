@@ -1,5 +1,11 @@
-# -*- coding: utf-8 -*-
-
+# coding: utf-8
+# Name:        logger.py
+# Author:      Mancuniancol
+# Created on:  28.11.2016
+# Licence:     GPL v.3: http://www.gnu.org/copyleft/gpl.html
+"""
+Create entry in Kodi's log
+"""
 import logging
 
 import xbmc

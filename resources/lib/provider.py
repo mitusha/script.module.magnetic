@@ -1,11 +1,17 @@
-# -*- coding: utf-8 -*-
-# This code is based in provider.py from pulsar
-# https://github.com/steeve/plugin.video.pulsar
+# coding: utf-8
+# Name:        provider.py
+# Author:      Mancuniancol
+# Created on:  28.11.2016
+# Licence:     GPL v.3: http://www.gnu.org/copyleft/gpl.html
+"""
+Magnetic module which manages the providers and requests
+This code is based in provider.py from pulsar
+https://github.com/steeve/plugin.video.pulsar
+"""
 
 import re
 import sys
 import urllib2
-import xml.etree.ElementTree
 from os import path
 from urllib import unquote_plus, quote_plus
 from urlparse import urlparse
@@ -18,11 +24,22 @@ from storage import *
 from utils import PROVIDER_SERVICE_HOST, PROVIDER_SERVICE_PORT
 from utils import get_setting, get_int, get_float
 
+# just for pycharm's sake
 Html()
 
 
-# noinspection PyBroadException
 def register(search, search_movie, search_episode, search_season):
+    """
+    Register each method from provider
+    :param search: general search method
+    :type search: callable
+    :param search_movie: movies search method
+    :type search_movie: callable
+    :param search_episode: tv shows and anime search method
+    :type search_episode: callable
+    :param search_season: by season search method
+    :type search_season: callable
+    """
     if len(sys.argv) < 4:
         xbmcaddon.Addon().openSettings()
         return
@@ -43,18 +60,31 @@ def register(search, search_movie, search_episode, search_season):
         results = list(method(query))
         results = json.dumps(results)
 
-    except:
+    except Exception as e:
         results = json.dumps([])
-        logger.log.error("Addon threw error:" + str(addonid))
+        logger.log.error("Addon threw error %s: %s" % (str(addonid), repr(e)))
 
+    # POST request
     request_url = urllib2.Request(callback, results)
     urllib2.urlopen(request_url)
 
 
 # find the name in different language
-def translator(title, imdb_id, language, extra=True):
+def translator(title=None, imdb_id=None, language=None, extra=True):
+    """
+    Translate title
+    :param title: Title to translate
+    :type title: str
+    :param imdb_id: IMDB id from the title
+    :type  imdb_id: str
+    :param language: requested language for the translation
+    :type language: str
+    :param extra: extra information
+    :type extra: bool
+    :return: translated title
+    """
     keywords = {'en': '', 'de': '', 'es': 'espa', 'fr': 'french', 'it': 'italian', 'pt': 'portug'}
-    if len(imdb_id) > 0:
+    if imdb_id:
         url_themoviedb = "http://api.themoviedb.org/3/find/%s?api_key=8d0e4dca86c779f4157fc2c469c372ca&language=%s" \
                          "&external_source=imdb_id" % (imdb_id, language)
         if Browser.open(url_themoviedb):
@@ -89,6 +119,12 @@ def translator(title, imdb_id, language, extra=True):
 
 #  Get the title from imdb id code
 def imdb_title(imdb_id):
+    """
+    Get title from IMDB id
+    :param imdb_id: IMDB id
+    :type imdb_id: str
+    :return: title
+    """
     result = ''
     if Browser.open('http://www.omdbapi.com/?i=%s&r=json' % imdb_id):
         data = Browser.content.replace('"', '').replace('{', '').replace('}', '').split(',')
@@ -97,6 +133,11 @@ def imdb_title(imdb_id):
 
 
 def clean_size(text=""):
+    """
+    Remove unnecessary information from string which has size information ex: 6.50GB
+    :param text:
+    :return: cleaned string
+    """
     if text is not None:
         pos = text.rfind('B')
         if pos > 0:
@@ -105,6 +146,12 @@ def clean_size(text=""):
 
 
 def add_base_url(url=''):
+    """
+    Create a full URL
+    :param url: url address
+    :type url: str
+    :return: full URL
+    """
     if url.startswith('//'):
         url = 'http:' + url
     elif url.startswith('/'):
@@ -118,6 +165,14 @@ def add_base_url(url=''):
 
 
 def clean_magnet(magnet="", info_hash=""):
+    """
+    Create a magnet from info_hash if it doesn't exist
+    :param magnet: magnet or torrent
+    :type magnet: str
+    :param info_hash: info_hash
+    :type info_hash: str
+    :return: complete magnet or torrent
+    """
     if len(magnet) > 0:
         magnet = add_base_url(magnet)
     elif len(magnet) == 0 and len(info_hash) > 0:
@@ -125,8 +180,13 @@ def clean_magnet(magnet="", info_hash=""):
     return magnet
 
 
-# noinspection PyBroadException
-def get_playable_link(page):
+def get_playable_link(page=''):
+    """
+    Get playable link from a web page
+    :param page: URL address of the web page
+    :type page: str
+    :return: encode link to play video
+    """
     page = normalize_string(page)
     exceptions_list = Storage.open("exceptions")
     result = page
@@ -165,28 +225,44 @@ def get_playable_link(page):
             else:
                 exceptions_list.add(re.search("^https?://(.*?)/", page).group(1))
                 exceptions_list.sync()
-        except:
+        except Exception as e:
+            logger.log.error("Error getting playable link: %s" % repr(e))
             pass
     return quote_plus(result)
 
 
 def parse_json(data):
+    """
+    Createa json from string
+    :param data: json in string format
+    :type data: str
+    :return: json
+    """
     return json.loads(data)
 
 
-def parse_xml(data):
-    return xml.etree.ElementTree.fromstring(data)
-
-
-def exception(title):
-    title = title.lower()
-    title = title.replace('csi crime scene investigation', 'CSI')
-    title = title.replace('law and order special victims unit', 'law and order svu')
-    title = title.replace('law order special victims unit', 'law and order svu')
+def exception(title=None):
+    """
+    Change the title to the standard name in the torrent sites
+    :param title: title to check
+    :type title: str
+    :return: the new title
+    """
+    if title:
+        title = title.lower()
+        title = title.replace('csi crime scene investigation', 'CSI')
+        title = title.replace('law and order special victims unit', 'law and order svu')
+        title = title.replace('law order special victims unit', 'law and order svu')
     return title
 
 
 def read_keywords(keywords):
+    """
+    Create list from string where the values are marked between curly brackets {example}
+    :param keywords: string with the information
+    :type keywords: str
+    :return: list with collected keywords
+    """
     results = []
     for value in re.findall('{(.*?)}', keywords):
         results.append(value)
@@ -194,14 +270,23 @@ def read_keywords(keywords):
 
 
 def format_decimal(times):
+    """
+    Format a number to decimal
+    :param times: value
+    :type  times: int
+    :return: string  with the formatted value
+    """
     value = ''
     for i in range(1, times):
         value += '0'
     return "%" + value + "%sd" % times
 
 
-# read provider xbmcaddon.Addon()
 class MetaSettings(type):
+    """
+    Class to read values from add-on's settings
+    """
+
     @classmethod
     def __getitem__(mcs, item):
         if item is "max_magnets":
@@ -243,6 +328,10 @@ class MetaSettings(type):
 
 
 class Settings(object):
+    """
+    User's class to get the values from the add-on's settings
+    """
+
     def __init__(self):
         pass
 
@@ -250,8 +339,11 @@ class Settings(object):
     pass
 
 
-# filtering
 class Filtering:
+    """
+    Helper to filtering titles
+    """
+
     def __init__(self):
         pass
 
@@ -275,6 +367,12 @@ class Filtering:
 
     @classmethod
     def use_general(cls, info):
+        """
+        Set the values for general search
+        :param info: payload
+        :type info: dict
+        :return:
+        """
         cls.info = info
         cls.url = Settings["general_url"]
         cls.filter_title = Settings["general_title"]
@@ -290,6 +388,12 @@ class Filtering:
 
     @classmethod
     def use_movie(cls, info):
+        """
+        Set the values for movies search
+        :param info: payload
+        :type info: dict
+        :return:
+        """
         cls.info = info
         cls.url = Settings["movie_url"]
         cls.filter_title = Settings["movie_title"]
@@ -305,6 +409,12 @@ class Filtering:
 
     @classmethod
     def use_tv(cls, info):
+        """
+        Set the values for TV Shows search
+        :param info: payload
+        :type info: dict
+        :return:
+        """
         cls.info = info
         cls.url = Settings["tv_url"]
         cls.filter_title = Settings["tv_title"]
@@ -320,6 +430,12 @@ class Filtering:
 
     @classmethod
     def use_season(cls, info):
+        """
+        Set the values for by season search
+        :param info: payload
+        :type info: dict
+        :return:
+        """
         cls.info = info
         cls.url = Settings["season_url"]
         cls.filter_title = Settings["season_title"]
@@ -335,6 +451,12 @@ class Filtering:
 
     @classmethod
     def use_anime(cls, info):
+        """
+        Set the values for anime search
+        :param info: payload
+        :type info: dict
+        :return:
+        """
         cls.info = info
         cls.url = Settings["anime_url"]
         cls.filter_title = Settings["anime_title"]
@@ -350,14 +472,26 @@ class Filtering:
 
     @classmethod
     def information(cls):
+        """
+        Print the information about the filtering
+        """
         logger.log.debug('Accepted Keywords: %s' % cls.quality_allow)
         logger.log.debug('Blocked Keywords: %s' % cls.quality_deny)
         logger.log.debug('min Size: %s' % str(cls.min_size) + ' GB')
         logger.log.debug('max Size: %s' % ((str(cls.max_size) + ' GB') if cls.max_size != 10 else 'MAX'))
 
-    # validate keywords
     @staticmethod
     def included(value, keys, strict=False):
+        """
+        Check if the keys are present in the string
+        :param value: string to test
+        :type value: str
+        :param keys: values to check
+        :type keys: list
+        :param strict: if it accepts partial results
+        :type strict: bool
+        :return: True is any key is included. False, otherwise.
+        """
         value = ' ' + value + ' '
         if '*' in keys:
             res = True
@@ -377,9 +511,14 @@ class Filtering:
             res = any(res1)
         return res
 
-    # validate size
     @classmethod
     def size_clearance(cls, size):
+        """
+        Convert string with size format to number ex: 1kb = 1000
+        :param size: string with the size format
+        :type size: str
+        :return: converter value in integer
+        """
         max_size1 = 100 if cls.max_size == 10 else cls.max_size
         res = False
         value = get_float(size)
@@ -390,21 +529,35 @@ class Filtering:
 
     # noinspection PyBroadException
     @staticmethod
-    def normalize_string(name):
-        from unicodedata import normalize
-        import types
-        try:
-            normalize_name = name.decode('unicode-escape').encode('latin-1')
-        except:
-            if types.StringType == type(name):
-                unicode_name = unicode(name, 'utf-8', 'ignore')
-            else:
-                unicode_name = name
-            normalize_name = normalize('NFKD', unicode_name).encode('ascii', 'ignore')
-        return normalize_name
+    def normalize_string(name=None):
+        """
+        Convert any type of string to latin-1 encoding
+        :param name: string to convert
+        :type name: str
+        :return: converter string
+        """
+        if name:
+            from unicodedata import normalize
+            import types
+            try:
+                normalize_name = name.decode('unicode-escape').encode('latin-1')
+            except:
+                if types.StringType == type(name):
+                    unicode_name = unicode(name, 'utf-8', 'ignore')
+                else:
+                    unicode_name = name
+                normalize_name = normalize('NFKD', unicode_name).encode('ascii', 'ignore')
+            return normalize_name
+        return ''
 
     @staticmethod
-    def un_code_name(name):  # convert all the &# codes to char, remove extra-space and normalize
+    def un_code_name(name):
+        """
+        Convert all the &# codes to char, remove extra-space and normalize
+        :param name: string to convert
+        :type name: str
+        :return: converted string
+        """
         from HTMLParser import HTMLParser
 
         name = name.replace('<![CDATA[', '').replace(']]', '')
@@ -412,13 +565,25 @@ class Filtering:
         return name
 
     @staticmethod
-    def unquote_name(name):  # convert all %symbols to char
+    def unquote_name(name):
+        """
+        Convert all %symbols to char
+        :param name: string to convert
+        :type name: str
+        :return: converted string
+        """
         from urllib import unquote
 
         return unquote(name)
 
     @classmethod
-    def safe_name(cls, value):  # make the name directory and filename safe
+    def safe_name(cls, value):
+        """
+        Make the name directory and filename safe
+        :param value: string to convert
+        :type value: str
+        :return: converted string
+        """
         value = cls.normalize_string(value)  # First normalization
         value = cls.unquote_name(value)
         value = cls.un_code_name(value)
@@ -432,9 +597,16 @@ class Filtering:
         value = ' '.join(value.split())
         return value.replace('S H I E L D', 'SHIELD')
 
-    # verify
     @classmethod
     def verify(cls, name, size):
+        """
+        Check the name matches with the title and the filtering keywords, and the size with filtering size values
+        :param name: name of the torrent
+        :type name: str
+        :param size: size of the torrent
+        :type size: str
+        :return: True is complied with the filtering.  False, otherwise.
+        """
         if name is None or name is '':
             cls.reason = name.replace(' - ' + Settings.name_provider, '') + ' ***Empty Name***'
             return False
@@ -464,6 +636,16 @@ class Filtering:
 
 
 def generate_payload(generator=None, verify_name=True, verify_size=True):
+    """
+    Create the payload from the generator method from the provider
+    :param generator: generator method
+    :type generator: callable
+    :param verify_name: if the name needs to be verified
+    :type verify_name: bool
+    :param verify_size: if the size needs to be verified
+    :type verify_size: bool
+    :return: magnets and torrent results
+    """
     Filtering.information()  # print filters xbmcaddon.Addon()
     results = []
     cont = 0
@@ -498,6 +680,16 @@ def generate_payload(generator=None, verify_name=True, verify_size=True):
 
 
 def process(generator=None, verify_name=True, verify_size=True):
+    """
+    Create a thread for each generator
+    :param generator: generator method
+    :type generator: callable
+    :param verify_name: if the name needs to be verified
+    :type verify_name: bool
+    :param verify_size: if the size needs to be verified
+    :type verify_size: bool
+    :return: magnets and torrent results from all threads
+    """
     from threading import Thread
     threads = []
 
@@ -516,13 +708,24 @@ def process(generator=None, verify_name=True, verify_size=True):
 
 
 def execute_process(generator=None, verify_name=True, verify_size=True):
+    """
+    Process all the queries from the provider and add the result to Filtering static class
+    :param generator: generator method
+    :type generator: callable
+    :param verify_name: if the name needs to be verified
+    :type verify_name: bool
+    :param verify_size: if the size needs to be verified
+    :type verify_size: bool
+    """
     # get the cloudhole key
     if Settings["use_cloudhole"] == 'true':
-        Browser.cloudhole_key = xbmcaddon.Addon('script.module.magnetic').getSetting('cloudhole_key')
+        Browser.clearance = xbmcaddon.Addon('script.module.magnetic').getSetting('clearance')
+        Browser.user_agent = xbmcaddon.Addon('script.module.magnetic').getSetting('user_agent')
 
-    # start the process
+        # start the process
     for query in Filtering.queries:
         keywords = read_keywords(query)
+
         for keyword in keywords:
             keyword = keyword.lower()
             if 'title' in keyword:
@@ -533,8 +736,10 @@ def execute_process(generator=None, verify_name=True, verify_size=True):
                 else:
                     title = Filtering.info["title"].encode('utf-8')
                 query = query.replace('{%s}' % keyword, title)
+
             if 'year' in keyword:
                 query = query.replace('{%s}' % keyword, Filtering.info["year"])
+
             if 'season' in keyword:
                 if ':' in keyword:
                     keys = keyword.split(':')
@@ -542,6 +747,7 @@ def execute_process(generator=None, verify_name=True, verify_size=True):
                 else:
                     season = '%s' % Filtering.info["season"]
                 query = query.replace('{%s}' % keyword, '' + season)
+
             if 'episode' in keyword:
                 if ':' in keyword:
                     keys = keyword.split(':')
@@ -553,29 +759,37 @@ def execute_process(generator=None, verify_name=True, verify_size=True):
         if query is not '':
             # creating url
             url_search = Filtering.url.replace('QUERY', query.replace(' ', Settings['separator']))
+
             # creating the payload for Post Method
             payload = dict()
+
             for key, value in Filtering.post_data.iteritems():
                 if 'QUERY' in value:
                     payload[key] = Filtering.post_data[key].replace('QUERY', query)
+
                 else:
                     payload[key] = Filtering.post_data[key]
+
             logger.log.debug(query)
             logger.log.debug(Filtering.post_data)
             logger.log.debug(payload)
+
             # creating the payload for Get Method
             data = None
             if Filtering.get_data is not None:
                 data = dict()
+
                 for key, value in Filtering.get_data.iteritems():
                     if 'QUERY' in value:
                         data[key] = Filtering.get_data[key].replace('QUERY', query)
+
                     else:
                         data[key] = Filtering.get_data[key]
+
             # to do filtering by name
             Filtering.title = query
             logger.log.debug(url_search)
 
-            # requesting the QUERY
+            # requesting the QUERY and adding info
             Browser.open(url_search, post_data=payload, get_data=data)
             Filtering.results.extend(generate_payload(generator(Browser.content), verify_name, verify_size))

@@ -12,7 +12,7 @@ from threading import Thread
 from urllib import quote_plus, unquote_plus
 
 import filtering
-from browser import read_torrent, get_cloudhole_key
+from browser import read_torrent, get_cloudhole_key, get_cloudhole_clearance
 from storage import *
 from utils import *
 
@@ -149,7 +149,10 @@ def get_results(self):
 
     if cache is None or not get_setting('use_cache', bool) or len(provider) > 0:
         # read the cloudhole key from the API
-        set_setting('cloudhole_key', get_cloudhole_key())
+        if get_setting("use_cloudhole", bool):
+            clearance, user_agent = get_cloudhole_clearance(get_cloudhole_key())
+            set_setting('clearance', clearance)
+            set_setting('user_agent', user_agent)
 
         # requests the results
         normalized_list = search(method, payload, provider)

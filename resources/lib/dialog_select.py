@@ -1,5 +1,14 @@
-# The original code was borrowed from Quasar
-# https://github.com/scakemyer/plugin.video.quasar
+# coding: utf-8
+# Name:        provider.py
+# Author:      Mancuniancol
+# Created on:  28.11.2016
+# Licence:     GPL v.3: http://www.gnu.org/copyleft/gpl.html
+"""
+Create a custom select dialog
+The original code was borrowed from Quasar
+https://github.com/scakemyer/plugin.video.quasar
+"""
+
 
 import xbmcgui
 
@@ -10,7 +19,12 @@ KEY_NAV_BACK = 92
 
 
 def check_quality(text=""):
-    # quality
+    """
+    Standard text for quality based in the filename
+    :param text: filename
+    :type text: str
+    :return: standard text for quality
+    """
     key_words = {"Cam": ["camrip", "cam"],
                  "Telesync": ["ts", "telesync", "pdvd"],
                  "Workprint": ["wp", "workprint"],
@@ -88,14 +102,21 @@ def check_quality(text=""):
 
 
 class DialogSelect(xbmcgui.WindowXMLDialog):
+    """
+    Dialog select class
+    """
+
     def __init__(self, *args, **kwargs):
-        xbmcgui.WindowXML.__init__(self)
+        xbmcgui.WindowXML.__init__(self, *args)
         self.items = kwargs.get('items', [])
         self.title = kwargs.get('title', '')
         self.count = 0
         self.ret = -1
 
     def onInit(self):
+        """
+        Creation of the dialog with the information from kwargs
+        """
         self.getControl(32501).setLabel(self.title)
         for item in self.items:
             quality = check_quality(item["name"])
@@ -105,9 +126,14 @@ class DialogSelect(xbmcgui.WindowXMLDialog):
             self.addItem(label1, label2, icon)
 
     def onClick(self, control_id):
+        """
+        On click
+        :param control_id:
+        """
         if control_id == 32500:
             # Close Button
             self.close()
+
         elif control_id == 32503:
             # Panel
             list_control = self.getControl(32503)
@@ -116,10 +142,23 @@ class DialogSelect(xbmcgui.WindowXMLDialog):
             self.close()
 
     def onAction(self, action):
+        """
+        On action
+        :param action: action linked to key
+        """
         if action.getId() in [ACTION_PARENT_DIR, KEY_NAV_BACK, ACTION_PREVIOUS_MENU]:
             self.close()
 
     def addItem(self, label1="", label2="", icon=None):
+        """
+        Adding an item
+        :param label1: first line
+        :type label1: str
+        :param label2: second line
+        :type label2: str
+        :param icon: path icon
+        :type icon: str
+        """
         list_control = self.getControl(32503)
         item = xbmcgui.ListItem(label1, label2)
         item.setProperty('index', str(self.count))

@@ -1,9 +1,9 @@
-import time
 import random
 import re
-import os
-from requests.sessions import Session
+import time
+
 import js2py
+from requests.sessions import Session
 
 try:
     from urlparse import urlparse
@@ -81,7 +81,7 @@ class CloudflareScraper(Session):
 
     def extract_js(self, body):
         js = re.search(r"setTimeout\(function\(\){\s+(var "
-                        "s,t,o,p,b,r,e,a,k,i,n,g,f.+?\r?\n[\s\S]+?a\.value =.+?)\r?\n", body).group(1)
+                       "s,t,o,p,b,r,e,a,k,i,n,g,f.+?\r?\n[\s\S]+?a\.value =.+?)\r?\n", body).group(1)
         js = re.sub(r"a\.value = (parseInt\(.+?\)).+", r"\1", js)
         js = re.sub(r"\s{3,}[a-z](?: = |\.).+", "", js)
 
@@ -108,9 +108,7 @@ class CloudflareScraper(Session):
 
         return scraper
 
-
-    ## Functions for integrating cloudflare-scrape with other applications and scripts
-
+    # Functions for integrating cloudflare-scrape with other applications and scripts
     @classmethod
     def get_tokens(cls, url, user_agent=None, **kwargs):
         scraper = cls.create_scraper()
@@ -132,14 +130,15 @@ class CloudflareScraper(Session):
                 cookie_domain = d
                 break
         else:
-            raise ValueError("Unable to find Cloudflare cookies. Does the site actually have Cloudflare IUAM mode enabled?")
+            raise ValueError(
+                "Unable to find Cloudflare cookies. Does the site actually have Cloudflare IUAM mode enabled?")
 
         return ({
                     "__cfduid": scraper.cookies.get("__cfduid", "", domain=cookie_domain),
                     "cf_clearance": scraper.cookies.get("cf_clearance", "", domain=cookie_domain)
                 },
                 scraper.headers["User-Agent"]
-               )
+        )
 
     @classmethod
     def get_cookie_string(cls, url, user_agent=None, **kwargs):
@@ -148,6 +147,7 @@ class CloudflareScraper(Session):
         """
         tokens, user_agent = cls.get_tokens(url, user_agent=user_agent)
         return "; ".join("=".join(pair) for pair in tokens.items()), user_agent
+
 
 create_scraper = CloudflareScraper.create_scraper
 get_tokens = CloudflareScraper.get_tokens

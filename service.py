@@ -1,5 +1,5 @@
 # coding: utf-8
-# Name:        magnetic.py
+# Name:        service.py
 # Author:      Mancuniancol
 # Created on:  28.11.2016
 # Licence:     GPL v.3: http://www.gnu.org/copyleft/gpl.html
@@ -22,8 +22,6 @@ from resources.lib.utils import PROVIDER_SERVICE_HOST, PROVIDER_SERVICE_PORT, AD
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     """
     Handle requests in a separate thread.
-    :param ThreadingMixIn: message to the log
-    :type ThreadingMixIn: ThreadingMixIn
     """
     daemon_threads = True
     allow_reuse_address = True
@@ -63,4 +61,4 @@ if __name__ == '__main__':
     while not xbmc.abortRequested:
         xbmc.sleep(1500)
     server.shutdown()
-    logger.log.info("Exiting providers service")
+    logger.log.info("Exiting providers service, Bye!")

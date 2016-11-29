@@ -1,3 +1,4 @@
+v0.9.12 global clearance cloudhole
 v0.9.11 getting global cloudhole key
 v0.9.10 preparing for official release
 v0.9.9 syntax error spmc16
