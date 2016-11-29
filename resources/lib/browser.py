@@ -150,25 +150,6 @@ class Browser:
         return cls._cookies
 
     @classmethod
-    def get_cloudhole_key(cls):
-        """
-        Get the Cloudhole Key
-        """
-        cls.cloudhole_key = None
-        try:
-            r = urllib2.Request("https://cloudhole.herokuapp.com/key")
-            r.add_header('Content-type', 'application/json')
-            res = urllib2.urlopen(r)
-            content = res.read()
-            _log_debug("CloudHole returned: %s" % content)
-            data = json.loads(content)
-            cls.cloudhole_key = data['key']
-
-        except Exception as e:
-            _log_debug("Getting CloudHole Key error: %s" % repr(e))
-            pass
-
-    @classmethod
     def open(cls, url='', language='en', post_data=None, get_data=None):
         """
         Open a web page and returns its contents
@@ -193,16 +174,16 @@ class Browser:
         data = urlencode(post_data) if len(post_data) > 0 else None
         req = urllib2.Request(url, data)
 
-        # Headers
-        req.add_header('User-Agent', USER_AGENT)
-        req.add_header('Content-Language', language)
-        req.add_header("Accept-Encoding", "gzip")
-
-        # Cookies
+        # Cookies and cloudhole info
         cls._read_cookies(url)
         _log_debug("Cookies: %s" % repr(cls._cookies))
         # open cookie jar
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cls._cookies))
+
+        # Headers
+        req.add_header('User-Agent', USER_AGENT)
+        req.add_header('Content-Language', language)
+        req.add_header("Accept-Encoding", "gzip")
 
         try:
             cls._good_spider()
@@ -298,6 +279,26 @@ def get_links(uri=''):
                     result = 'http' + content[0] + '.torrent'
                     result = result.replace('torcache.net', 'itorrents.org')
     return result
+
+
+def get_cloudhole_key():
+    """
+    Get the Cloudhole Key
+    """
+    cloudhole_key = None
+    try:
+        r = urllib2.Request("https://cloudhole.herokuapp.com/key")
+        r.add_header('Content-type', 'application/json')
+        res = urllib2.urlopen(r)
+        content = res.read()
+        _log_debug("CloudHole returned: %s" % content)
+        data = json.loads(content)
+        cloudhole_key = data['key']
+
+    except Exception as e:
+        _log_debug("Getting CloudHole Key error: %s" % repr(e))
+        pass
+    return cloudhole_key
 
 
 class Magnet:

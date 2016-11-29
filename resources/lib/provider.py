@@ -518,7 +518,7 @@ def process(generator=None, verify_name=True, verify_size=True):
 def execute_process(generator=None, verify_name=True, verify_size=True):
     # get the cloudhole key
     if Settings["use_cloudhole"] == 'true':
-        Browser.get_cloudhole_key()
+        Browser.cloudhole_key = xbmcaddon.Addon('script.module.magnetic').getSetting('cloudhole_key')
 
     # start the process
     for query in Filtering.queries:

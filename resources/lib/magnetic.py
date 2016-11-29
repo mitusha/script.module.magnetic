@@ -1,10 +1,18 @@
 # coding: utf-8
+# Name:        magnetic.py
+# Author:      Mancuniancol
+# Created on:  28.11.2016
+# Licence:     GPL v.3: http://www.gnu.org/copyleft/gpl.html
+"""
+Magnetic module which manages the providers and requests
+"""
+
 import urlparse
 from threading import Thread
 from urllib import quote_plus, unquote_plus
 
 import filtering
-from browser import read_torrent
+from browser import read_torrent, get_cloudhole_key
 from storage import *
 from utils import *
 
@@ -14,13 +22,18 @@ available_providers = 0
 request_time = time.clock()
 
 
-# return the torrent information from the page
 def process_torrent(self):
+    """
+    Process the torrent information from a webpage
+    :param self: request
+    :type self: ProvidersHandler
+    """
     # request data
     parsed = urlparse.urlparse(self.path)
     info = urlparse.parse_qs(parsed.query)
     uri = info.get('uri', [''])[0]
     filename = uri if uri.endswith('.torrent') else uri + '.torrent'
+
     # headers
     self.send_response(200)
     self.send_header('Content-type', 'application/x-bittorrent')
@@ -33,8 +46,12 @@ def process_torrent(self):
     self.wfile.write(read_torrent(unquote_plus(uri)))
 
 
-# provider call back with results
 def process_provider(self):
+    """
+    Provider call back with results
+    :param self: request
+    :type self: ProvidersHandler
+    """
     global provider_results
     global available_providers
     global provider_name
@@ -61,6 +78,11 @@ def process_provider(self):
 
 
 def get_results(self):
+    """
+    Process to get the results
+    :param self: request
+    :type self: ProvidersHandler
+    """
     global provider_results
 
     # init list
@@ -106,18 +128,33 @@ def get_results(self):
         payload = json.dumps(season_item)
 
     else:
-        return json.dumps("OPERATION NOT FOUND")
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        # send the results
+        self.wfile.write("OPERATION NOT FOUND")
+        return
 
     if len(title) == 0 or len(method) == 0:
-        return json.dumps("Payload Incomplete!!!      ") + payload
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        # send the results
+        self.wfile.write("Payload Incomplete!!!      " + repr(payload))
+        return
 
     # check if the search is in cache
     database = Storage.open("providers", 60 * 6, True)
     cache = database.get(payload, None)
 
     if cache is None or not get_setting('use_cache', bool) or len(provider) > 0:
+        # read the cloudhole key from the API
+        set_setting('cloudhole_key', get_cloudhole_key())
+
+        # requests the results
         normalized_list = search(method, payload, provider)
         results = normalized_list
+
         # if there is results it will be saved in cache
         if len(normalized_list.get('magnets', [])) > 0:
             database[payload] = results
@@ -136,8 +173,17 @@ def get_results(self):
     self.wfile.write(json.dumps(normalized_list))
 
 
-# search for torrents - call providers
 def search(method, payload_json, provider=""):
+    """
+    Search for torrents - call providers
+    :param method: method of search
+    :type method: str
+    :param payload_json: parload in json format
+    :type payload_json: str
+    :param provider: name of provider, if the search is individually
+    :type provider: str
+    :return list of results
+    """
     global provider_results
     global available_providers
     global request_time
@@ -206,8 +252,16 @@ def search(method, payload_json, provider=""):
     return filtered_results
 
 
-# run provider script
 def run_provider(addon, method, search_query):
+    """
+    Run external script
+    :param addon: add-on to run
+    :type addon: str
+    :param method: method in the script
+    :type method: str
+    :param search_query: search or query
+    :type search_query: str
+    """
     logger.log.debug("Processing:" + addon)
     xbmc.executebuiltin(
         "RunScript(" + addon + "," + addon + "," + method + "," + quote_plus(search_query.encode('utf-8')) + ")", True)

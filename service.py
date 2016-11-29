@@ -1,4 +1,12 @@
 # coding: utf-8
+# Name:        magnetic.py
+# Author:      Mancuniancol
+# Created on:  28.11.2016
+# Licence:     GPL v.3: http://www.gnu.org/copyleft/gpl.html
+"""
+Service module of Magnetic
+"""
+
 import threading
 from BaseHTTPServer import BaseHTTPRequestHandler
 from BaseHTTPServer import HTTPServer
@@ -12,6 +20,11 @@ from resources.lib.utils import PROVIDER_SERVICE_HOST, PROVIDER_SERVICE_PORT, AD
 
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    """
+    Handle requests in a separate thread.
+    :param ThreadingMixIn: message to the log
+    :type ThreadingMixIn: ThreadingMixIn
+    """
     daemon_threads = True
     allow_reuse_address = True
     """Handle requests in a separate thread."""

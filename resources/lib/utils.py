@@ -116,6 +116,10 @@ def get_setting(key, converter=str, choices=None):
                         ' or tuple.')
 
 
+def set_setting(key, value):
+    ADDON.setSetting(key, value)
+
+
 def get_icon_path():
     addon_path = xbmcaddon.Addon().getAddonInfo("path")
     return os.path.join(addon_path, 'icon.png')
