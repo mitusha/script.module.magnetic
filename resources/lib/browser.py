@@ -291,7 +291,7 @@ def get_cloudhole_key():
         r.add_header('Content-type', 'application/json')
         res = urllib2.urlopen(r)
         content = res.read()
-        _log_debug("CloudHole returned: %s" % content)
+        _log_debug("CloudHole key: %s" % content)
         data = json.loads(content)
         cloudhole_key = data['key']
 
