@@ -240,8 +240,8 @@ msgstr "Cache leeren"
 
 #: settings.xml
 msgctxt "#32073"
-msgid "Add-on to use:"
-msgstr "Zu verwendendes Add-On:"
+msgid "Add-on to use with Magnetizer:"
+msgstr "Add-on zu verwendendes mit Magnetisierer:"
 
 #: settings.xml
 msgctxt "#32074"
