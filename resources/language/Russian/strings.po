@@ -199,7 +199,7 @@ msgid "No providers installed"
 msgstr ""
 
 #: settings.xml
-msgctxt "#32060"
+msgctxt "#32061"
 msgid "Starting..."
 msgstr ""
 
@@ -235,7 +235,7 @@ msgstr ""
 
 #: settings.xml
 msgctxt "#32073"
-msgid "Add-on to use:"
+msgid "Add-on to use with Magnetizer:"
 msgstr ""
 
 #: settings.xml
