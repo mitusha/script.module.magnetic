@@ -235,8 +235,8 @@ msgstr "Pulisci Cache"
 
 #: settings.xml
 msgctxt "#32073"
-msgid "Add-on to use:"
-msgstr "Add-on da usare:"
+msgid "Add-on to use with Magnetizer:"
+msgstr "Add-on per l'uso con Magnetizzatore:"
 
 #: settings.xml
 msgctxt "#32074"
