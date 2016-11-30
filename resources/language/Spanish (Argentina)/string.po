@@ -240,8 +240,8 @@ msgstr "Limpiar el Cache"
  
 #: settings.xml
 msgctxt "#32073"
-msgid "Add-on to use:"
-msgstr "Extensión a utilizar:"
+msgid "Add-on to use with Magnetizer:"
+msgstr "Extensión a utilizar con Magnetizador:"
  
 #: settings.xml
 msgctxt "#32074"
