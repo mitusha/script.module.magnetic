@@ -240,8 +240,8 @@ msgstr "ניקוי מטמון"
 
 #: settings.xml
 msgctxt "#32073"
-msgid "Add-on to use:"
-msgstr "הרחבה לשימוש"
+msgid "Add-on to use with Magnetizer:"
+msgstr "עם magnetizer הרחבה לשימוש"
 
 #: settings.xml
 msgctxt "#32074"
