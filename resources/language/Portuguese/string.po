@@ -240,8 +240,8 @@ msgstr "Apagar Cache"
 
 #: settings.xml
 msgctxt "#32073"
-msgid "Add-on to use:"
-msgstr "Usar este Programa:"
+msgid "Add-on to use with Magnetizer:"
+msgstr "Usar este Programa com Magnetizador:"
 
 #: settings.xml
 msgctxt "#32074"
