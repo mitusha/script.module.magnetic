@@ -51,9 +51,32 @@ def play(magnet):
     xbmc.executebuiltin('Dialog.Close(all, true)')
 
 
-def search(query=""):
+def search(info=None):
+    # request data
+    operation = info.get('search', '')
+    query = info.get('title', '')
+    title = quote_plus(query)
+    payload = ''
+
+    if operation == 'general':
+        payload = '?search=general&title=%s' % title
+
+    elif operation == "movie":
+        year = info.get('year', '')
+        imdb_id = info.get('imdb', '')
+        payload = '?search=movie&imdb=%s&title=%s&year=%s' % (imdb_id, title, year)
+
+    elif operation == "episode":
+        season = info.get('season', '')
+        episode = info.get('episode', '')
+        payload = '?search=episode&title=%s&season=%s&episode=%s' % (title, season, episode)
+
+    elif operation == "season":
+        season = info.get('season', '')
+        payload = '?search=episode&title=%s&season=%s' % (title, season)
+
     magnetic_url = "http://%s:%s" % (str(PROVIDER_SERVICE_HOST), str(PROVIDER_SERVICE_PORT))
-    url = magnetic_url + "?search=general&title=%s" % query.replace(' ', '%20')
+    url = magnetic_url + payload
     logger.log.debug(url)
     results = dict()
 

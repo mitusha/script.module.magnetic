@@ -1,3 +1,4 @@
+v0.9.15 smart Magnetizer
 v0.9.14 integrating Magnetizer
 v0.9.13 fixing strings.po
 v0.9.12 global clearance cloudhole

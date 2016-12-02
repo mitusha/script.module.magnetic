@@ -27,9 +27,9 @@ args = dict(parse_qsl(sys.argv[2][1:]))
 listing = []
 speed_providers = Storage.open("speed")
 
-mode = args.get('mode', '')
+mode = args.get('mode', None)
+operation = args.get('search', None)
 addonid = args.get('addonid', '')
-query = args.get('query', '')
 
 
 # functions
@@ -41,9 +41,10 @@ def erase():
 
 
 # Mode Menu
-if mode == 'search':
+if operation:
+    # contextual menu - Magnetizer
     xbmcplugin.endOfDirectory(addon_handle, True, False, False)
-    search(query)
+    search(info=args)
 
 elif mode == 'provider':
     erase()
@@ -142,7 +143,7 @@ elif mode == 'defaults_all':
             shutil.rmtree(folder)
     xbmcgui.Dialog().ok('Magnetic', 'Defaults settings applied')
 
-if len(mode) == 0:
+if not mode:
     # creation menu
     for provider in utils.get_list_providers():
         name_provider = provider['name']  # gets name
