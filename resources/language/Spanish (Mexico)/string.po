@@ -59,6 +59,11 @@ msgid "HTML parsing"
 msgstr "Análisis de HTML"
 
 #: setting.xml
+msgctxt "#32010"
+msgid "[COLOR FFffd800]Magnetizer...[/COLOR]"
+msgstr "[COLOR FFffd800]Magnetizar...[/COLOR]"
+
+#: setting.xml
 msgctxt "#32015"
 msgid "Username:"
 msgstr "Nombre de Usuario:"
