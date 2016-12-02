@@ -61,7 +61,7 @@ msgstr "HTML parsing"
 #: setting.xml
 msgctxt "#32010"
 msgid "[COLOR FFffd800]Magnetizer...[/COLOR]"
-msgstr "[COLOR FFffd800]Magnetizador...[/COLOR]"
+msgstr "[COLOR FFffd800]Magnetizador[/COLOR]" Resultados para %s"
 
 #: setting.xml
 msgctxt "#32015"
@@ -250,7 +250,7 @@ msgstr "Usar este Programa com Magnetizador:"
 
 #: settings.xml
 msgctxt "#32074"
-msgid "Results for %s"
+msgid "[COLOR FFffd800]Magnetizer[/COLOR] Results for %s"
 msgstr "Resultados para %s"
 
 #: settings.xml

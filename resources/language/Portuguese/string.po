@@ -250,8 +250,8 @@ msgstr "Usar este Programa com Magnetizador:"
 
 #: settings.xml
 msgctxt "#32074"
-msgid "Results for %s"
-msgstr "Resultados para %s"
+msgid "[COLOR FFffd800]Magnetizer[/COLOR] Results for %s"
+msgstr "[COLOR FFffd800]Magnetizador[/COLOR]" Resultados para %s"
 
 #: settings.xml
 msgctxt "#32075"

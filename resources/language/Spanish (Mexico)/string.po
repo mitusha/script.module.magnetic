@@ -250,8 +250,8 @@ msgstr "Extensión a utilizar con Magnetizador:"
 
 #: settings.xml
 msgctxt "#32074"
-msgid "Results for %s"
-msgstr "Resultados para %"
+msgid "[COLOR FFffd800]Magnetizer[/COLOR] Results for %s"
+msgstr "[COLOR FFffd800]Magnetizar[/COLOR]" Resultados para %"
 
 #: settings.xml
 msgctxt "#32075"

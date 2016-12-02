@@ -245,8 +245,8 @@ msgstr "Add-on per l'uso con Magnetizzatore:"
 
 #: settings.xml
 msgctxt "#32074"
-msgid "Results for %s"
-msgstr "Risultati per %s"
+msgid "[COLOR FFffd800]Magnetizer[/COLOR] Results for %s"
+msgstr "[COLOR FFffd800]Magnetizzatore[/ COLOR] Risultati per %s"
 
 #: settings.xml
 msgctxt "#32075"

@@ -244,8 +244,8 @@ msgstr "Extension à utiliser avec Magnétiseur:"
 
 #: settings.xml
 msgctxt "#32074"
-msgid "Results for %s"
-msgstr "Résultats de %s"
+msgid "[COLOR FFffd800]Magnetizer[/COLOR] Results for %s"
+msgstr "[COLOR FFffd800]Magnétiseur[/COLOR] Résultats de %s"
 
 #: settings.xml
 msgctxt "#32075"

@@ -250,8 +250,8 @@ msgstr "עם magnetizer הרחבה לשימוש"
 
 #: settings.xml
 msgctxt "#32074"
-msgid "Results for %s"
-msgstr "תוצאות עבור %s"
+msgid "[COLOR FFffd800]Magnetizer[/COLOR] Results for %s"
+msgstr "[COLOR FFffd800]ממגנט[/COLOR] תוצאות עבור %s"
 
 #: settings.xml
 msgctxt "#32075"

@@ -245,7 +245,7 @@ msgstr "Tilläg för att använda med Magnetizer:"
 
 #: settings.xml
 msgctxt "#32074"
-msgid "Results for %s"
+msgid "[COLOR FFffd800]Magnetizer[/COLOR] Results for %s"
 msgstr ""
 
 #: settings.xml
