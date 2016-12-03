@@ -99,10 +99,10 @@
 						<posy>28</posy>
 						<width>707</width>
 						<height>30</height>
-						<font>font13</font>
+						<font>font11</font>
 						<align>left</align>
 						<aligny>center</aligny>
-						<textcolor>silver</textcolor>
+						<textcolor>FF666666</textcolor>
 						<shadowcolor>AA000000</shadowcolor>
 						<info>ListItem.Label2</info>
 					</control>
@@ -140,10 +140,10 @@
 						<posy>28</posy>
 						<width>707</width>
 						<height>30</height>
-						<font>font13</font>
+						<font>font11</font>
 						<align>left</align>
 						<aligny>center</aligny>
-						<textcolor>white</textcolor>
+						<textcolor>FF888888</textcolor>
 						<shadowcolor>AA000000</shadowcolor>
 						<info>ListItem.Label2</info>
 					</control>
