@@ -203,24 +203,29 @@ msgid "No providers installed"
 msgstr "Aucun fournisseur installés"
 
 #: settings.xml
-msgctxt "#32060"
+msgctxt "#32061"
 msgid "Starting..."
 msgstr "Démarrage..."
 
 #: settings.xml
-msgctxt "#32061"
+msgctxt "#32062"
 msgid "%s Providers Left"
 msgstr "% fournisseurs en attente"
 
 #: settings.xml
-msgctxt "#32062"
+msgctxt "#32063"
 msgid "1 Provider Left"
 msgstr "1 fournisseur en attente"
 
 #: settings.xml
-msgctxt "#32063"
+msgctxt "#32064"
 msgid " working slow"
 msgstr "pas vites"
+
+#: settings.xml
+msgctxt "#32065"
+msgid "Copying from cache"
+msgstr "En copiant du cache"
 
 #: settings.xml
 msgctxt "#32070"

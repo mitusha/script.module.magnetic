@@ -61,7 +61,7 @@ msgstr "HTML parsing"
 #: setting.xml
 msgctxt "#32010"
 msgid "[COLOR FFffd800]Magnetizer...[/COLOR]"
-msgstr "[COLOR FFffd800]Magnetizzatore...[/ COLOR]"
+msgstr "[COLOR FFffd800]Magnetizzatore...[/COLOR]"
 
 #: setting.xml
 msgctxt "#32015"
@@ -204,24 +204,29 @@ msgid "No providers installed"
 msgstr "Nessun provider installato"
 
 #: settings.xml
-msgctxt "#32060"
+msgctxt "#32061"
 msgid "Starting..."
 msgstr "Avvio..."
 
 #: settings.xml
-msgctxt "#32061"
+msgctxt "#32062"
 msgid "%s Providers Left"
 msgstr "%s Provider in attesa"
 
 #: settings.xml
-msgctxt "#32062"
+msgctxt "#32063"
 msgid "1 Provider Left"
 msgstr "1 Provider in attesa"
 
 #: settings.xml
-msgctxt "#32063"
+msgctxt "#32064"
 msgid " working slow"
 msgstr " funziona lentamente"
+
+#: settings.xml
+msgctxt "#32065"
+msgid "Copying from cache"
+msgstr "Copiatura dalla cache"
 
 #: settings.xml
 msgctxt "#32070"
@@ -246,7 +251,7 @@ msgstr "Add-on per l'uso con Magnetizzatore:"
 #: settings.xml
 msgctxt "#32074"
 msgid "[COLOR FFffd800]Magnetizer[/COLOR] Results for %s"
-msgstr "[COLOR FFffd800]Magnetizzatore[/ COLOR] Risultati per %s"
+msgstr "[COLOR FFffd800]Magnetizzatore[/COLOR] Risultati per %s"
 
 #: settings.xml
 msgctxt "#32075"

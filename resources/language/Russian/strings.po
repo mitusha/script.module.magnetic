@@ -209,18 +209,23 @@ msgid "Starting..."
 msgstr ""
 
 #: settings.xml
-msgctxt "#32061"
+msgctxt "#32062"
 msgid "%s Providers Left"
 msgstr ""
 
 #: settings.xml
-msgctxt "#32062"
+msgctxt "#32063"
 msgid "1 Provider Left"
 msgstr ""
 
 #: settings.xml
-msgctxt "#32063"
+msgctxt "#32064"
 msgid " working slow"
+msgstr ""
+
+#: settings.xml
+msgctxt "#32065"
+msgid "Copying from cache"
 msgstr ""
 
 #: settings.xml

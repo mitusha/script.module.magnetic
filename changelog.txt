@@ -1,3 +1,4 @@
+v0.9.20 fixing language
 v0.9.19 yellow magnetic
 v0.9.18 transparency
 v0.9.17 visible contextual menu
