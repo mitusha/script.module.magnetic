@@ -211,7 +211,7 @@ msgstr "Starte…"
 #: settings.xml
 msgctxt "#32062"
 msgid "%s Providers Left"
-msgstr "%s Provider übrig"
+msgstr "%s Providers übrig"
 
 #: settings.xml
 msgctxt "#32063"

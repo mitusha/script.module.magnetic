@@ -210,7 +210,7 @@ msgstr "Démarrage..."
 #: settings.xml
 msgctxt "#32062"
 msgid "%s Providers Left"
-msgstr "% fournisseurs en attente"
+msgstr "%s fournisseurs en attente"
 
 #: settings.xml
 msgctxt "#32063"
