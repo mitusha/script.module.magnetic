@@ -230,17 +230,17 @@ msgstr ""
 
 #: settings.xml
 msgctxt "#32070"
-msgid "Search Timeout Seconds"
+msgid "Search Timeout Seconds:"
 msgstr ""
 
 #: settings.xml
 msgctxt "#32071"
-msgid "Use Cache"
+msgid "Use Cache:"
 msgstr ""
 
 #: settings.xml
 msgctxt "#32072"
-msgid "Clear Cache"
+msgid "Clear Cache..."
 msgstr ""
 
 #: settings.xml

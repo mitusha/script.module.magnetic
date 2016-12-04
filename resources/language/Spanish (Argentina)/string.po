@@ -230,18 +230,18 @@ msgstr "Copiando del Cache"
  
 #: settings.xml
 msgctxt "#32070"
-msgid "Search Timeout Seconds"
-msgstr "Tiempo limite de la búsqueda en segundos"
+msgid "Search Timeout Seconds:"
+msgstr "Tiempo limite de la búsqueda en segundos:"
  
 #: settings.xml
 msgctxt "#32071"
-msgid "Use Cache"
-msgstr "Usar Cache"
+msgid "Use Cache:"
+msgstr "Usar Cache:"
  
 #: settings.xml
 msgctxt "#32072"
-msgid "Clear Cache"
-msgstr "Limpiar el Cache"
+msgid "Clear Cache..."
+msgstr "Limpiar el Cache..."
  
 #: settings.xml
 msgctxt "#32073"

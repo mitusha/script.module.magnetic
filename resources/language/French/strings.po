@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Kodi Addons\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-05 05:53-0400\n"
-"PO-Revision-Date: 2016-11-10 07:21-0500\n"
+"PO-Revision-Date: 2016-12-04 07:41-0500\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -151,6 +151,7 @@ msgstr "Taille maximum :"
 #: settings.xml
 msgctxt "#32040"
 msgid "Maximum torrents:"
+msgstr "Maximum flux:"
 
 #: settings.xml
 msgctxt "#32041"
@@ -229,18 +230,18 @@ msgstr "En copiant du cache"
 
 #: settings.xml
 msgctxt "#32070"
-msgid "Search Timeout Seconds"
-msgstr "Temps limite de la recherche en seconds"
+msgid "Search Timeout Seconds:"
+msgstr "Temps limite de la recherche en seconds:"
 
 #: settings.xml
 msgctxt "#32071"
-msgid "Use Cache"
-msgstr "Utiliser Cache"
+msgid "Use Cache:"
+msgstr "Utiliser Cache:"
 
 #: settings.xml
 msgctxt "#32072"
-msgid "Clear Cache"
-msgstr "Nettoyer le Cache"
+msgid "Clear Cache..."
+msgstr "Nettoyer le Cache..."
 
 #: settings.xml
 msgctxt "#32073"
@@ -255,7 +256,7 @@ msgstr "[COLOR FFffd800]Magnétiseur[/COLOR] Résultats de %s"
 #: settings.xml
 msgctxt "#32075"
 msgid "No torrents found"
-msgstr "Pas de torrents"
+msgstr "Pas de flux"
 
 #: settings.xml
 msgctxt "#32080"

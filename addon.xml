@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.module.magnetic" name="[COLOR FFffd800]Magnetic[/COLOR] Torrent Manager" version="0.9.21"
+<addon id="script.module.magnetic" name="[COLOR FFffd800]Magnetic[/COLOR] Torrent Manager" version="0.9.25"
        provider-name="mancuniancol">
     <requires>
         <import addon="xbmc.python" version="2.1.0"/>
@@ -10,13 +10,29 @@
     <extension point="kodi.context.item" library="contextitem.py">
         <item>
             <label>32010</label>
-            <visible>StringCompare(ListItem.dbtype,movie) | StringCompare(ListItem.dbtype,tvshow) | StringCompare(ListItem.dbtype,season)|!String.IsEmpty(ListItem.OriginalTitle)|!String.IsEmpty(ListItem.IMDBNumber)|!String.IsEmpty(ListItem.TVShowTitle)|!String.IsEmpty(ListItem.Season)|!String.IsEmpty(ListItem.Episode)</visible>
+            <visible>StringCompare(ListItem.dbtype,movie) | StringCompare(ListItem.dbtype,tvshow) |
+                StringCompare(ListItem.dbtype,season)|!String.IsEmpty(ListItem.OriginalTitle)|!String.IsEmpty(ListItem.IMDBNumber)|!String.IsEmpty(ListItem.TVShowTitle)|!String.IsEmpty(ListItem.Season)|!String.IsEmpty(ListItem.Episode)
+            </visible>
         </item>
     </extension>
     <extension point="xbmc.service" library="service.py" start="startup"/>
     <extension point="xbmc.python.module" library="resources/lib"/>
     <extension point="xbmc.addon.metadata">
-        <summary><![CDATA[Magnet service]]></summary>
-        <platform>linux windows osx android</platform>
+        <summary>Magnets and Torrents Collector</summary>
+        <description>Magnetic is Add-on for Kodi which allows to search torrents for other Add-ons like Quasar or Torrent V2.[CR]It also can work independently using the action called Magnetizer in any contextual menu in Kodi.
+        </description>
+        <disclaimer>The author does not host or distribute any of the content displayed by this addon.[CR]The author does not have any affiliation with the content provider.
+        </disclaimer>
+        <license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
+        <website>http://tvaddons.ag/</website>
+        <forum>https://forums.tvaddons.ag/addon-releases/31572-pulsar-providers-unofficial-pulsar-repo.html</forum>
+        <source>https://github.com/mancuniancol/script.module.magnetic</source>
+        <assets>
+            <icon>icon.png</icon>
+            <fanart>fanart.jpg</fanart>
+            <screenshot>resources/screenshots/screenshot1.PNG</screenshot>
+            <screenshot>resources/screenshots/screenshot2.PNG</screenshot>
+            <screenshot>resources/screenshots/screenshot3.PNG</screenshot>
+        </assets>
     </extension>
 </addon>
