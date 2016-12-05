@@ -221,7 +221,7 @@ msgstr "1 Provider Vänster"
 #: settings.xml
 msgctxt "#32064"
 msgid " working slow"
-msgstr "arbetar långsamt"
+msgstr " arbetar långsamt"
 
 #: settings.xml
 msgctxt "#32065"

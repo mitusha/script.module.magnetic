@@ -221,7 +221,7 @@ msgstr "Falta 1 proveedor"
 #: settings.xml
 msgctxt "#32064"
 msgid " working slow"
-msgstr "Trabajando lento"
+msgstr " Trabajando lento"
  
 #: settings.xml
 msgctxt "#32065"

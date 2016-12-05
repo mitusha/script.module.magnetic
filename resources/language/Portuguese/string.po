@@ -221,7 +221,7 @@ msgstr "1 Provedor Restante"
 #: settings.xml
 msgctxt "#32064"
 msgid " working slow"
-msgstr "Provedor Lento"
+msgstr " Provedor Lento"
 
 #: settings.xml
 msgctxt "#32065"

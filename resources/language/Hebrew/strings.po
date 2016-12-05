@@ -220,7 +220,7 @@ msgstr "ספק אחד נותר"
 #: settings.xml
 msgctxt "#32064"
 msgid " working slow"
-msgstr "עובד לאט"
+msgstr "עובד לאט "
 
 #: settings.xml
 msgctxt "#32065"

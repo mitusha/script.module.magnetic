@@ -96,7 +96,7 @@ def search(info=None):
         del dialog
 
     else:
-        window = DialogSelect("DialogSelectLarge.xml", ADDON_PATH, "Default", title=string(32074) % query, items=items)
+        window = DialogSelect("DialogSelectResults.xml", ADDON_PATH, "Default", title=string(32074) % query, items=items)
         window.doModal()
         selection = window.ret
         del window

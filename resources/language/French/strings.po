@@ -221,7 +221,7 @@ msgstr "1 fournisseur en attente"
 #: settings.xml
 msgctxt "#32064"
 msgid " working slow"
-msgstr "pas vites"
+msgstr " pas vite(s)"
 
 #: settings.xml
 msgctxt "#32065"

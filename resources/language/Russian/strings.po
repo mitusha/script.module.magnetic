@@ -221,7 +221,7 @@ msgstr "1 Средний левый"
 #: settings.xml
 msgctxt "#32064"
 msgid " working slow"
-msgstr "работает медленно"
+msgstr " работает медленно"
 
 #: settings.xml
 msgctxt "#32065"
