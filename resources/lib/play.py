@@ -82,7 +82,7 @@ def search(info=None):
 
     try:
         req = Request(url, None)
-        resp = urlopen(req).read()
+        resp = urlopen(req, timeout=60).read()
         results = loads(resp)
 
     except Exception as e:
