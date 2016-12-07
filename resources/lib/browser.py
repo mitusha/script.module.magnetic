@@ -260,7 +260,7 @@ def get_links(uri=''):
             if 'text/html' in Browser.headers.get("content-type", ""):
                 content = re.findall('magnet:\?[^\'"\s<>\[\]]+', data)
                 if content is not None and len(content) > 0:
-                        result = 'http://itorrents.org/torrent/%s.torrent' % Magnet(content[0]).info_hash
+                    result = 'http://itorrents.org/torrent/%s.torrent' % Magnet(content[0]).info_hash
                 else:
                     content = re.findall('http(.*?).torrent["\']', data)
                     if content is not None and len(content) > 0:
@@ -279,8 +279,6 @@ def get_links(uri=''):
                                 if content is not None and len(content) > 0:
                                     result = base_url + content[0]
     return result
-
-
 
 
 def get_cloudhole_key():
