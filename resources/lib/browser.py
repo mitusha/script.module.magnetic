@@ -183,6 +183,7 @@ class Browser:
             response.close()
             cls.status = 200
             _log_debug("Status: " + str(cls.status))
+            _log_debug(repr(cls.content))
 
         except urllib2.HTTPError as e:
             cls.status = e.code
@@ -247,20 +248,39 @@ def get_links(uri=''):
     Find the magnet information or torrent from web page
     :param uri:  Uniform Resource Identifier for the web page
     :type uri: str
-    :return: the torrent file URI.
+    :return: the torrent file URI, but not magnet.
     """
     result = uri
     if uri is not '' and not uri.endswith('.torrent'):
+        url_parse = urlparse(uri)
+        base_url = '%s://%s' % (url_parse.scheme, url_parse.netloc)
         if Browser.open(quote(uri).replace("%3A", ":")):
-            content = re.findall('magnet:\?[^\'"\s<>\[\]]+', Browser.content)
-            if content is not None and len(content) > 0:
-                result = 'http://itorrents.org/torrent/%s.torrent' % Magnet(content[0]).info_hash
-            else:
-                content = re.findall('http(.*?).torrent["\']', Browser.content)
+            data = normalize_string(Browser.content)
+            logger.log.debug(Browser.headers)
+            if 'text/html' in Browser.headers.get("content-type", ""):
+                content = re.findall('magnet:\?[^\'"\s<>\[\]]+', data)
                 if content is not None and len(content) > 0:
-                    result = 'http' + content[0] + '.torrent'
-                    result = result.replace('torcache.net', 'itorrents.org')
+                        result = 'http://itorrents.org/torrent/%s.torrent' % Magnet(content[0]).info_hash
+                else:
+                    content = re.findall('http(.*?).torrent["\']', data)
+                    if content is not None and len(content) > 0:
+                        result = 'http' + content[0] + '.torrent'
+                        result = result.replace('torcache.net', 'itorrents.org')
+                    else:
+                        content = re.findall('/download\?token=[A-Za-z0-9%]+', data)
+                        if content is not None and len(content) > 0:
+                            result = base_url + content[0]
+                        else:
+                            content = re.findall('/telechargement/[a-z0-9-_.]+', data)  # cpasbien
+                            if content is not None and len(content) > 0:
+                                result = base_url + content[0]
+                            else:
+                                content = re.findall('/torrents/download/\?id=[a-z0-9-_.]+', data)  # t411
+                                if content is not None and len(content) > 0:
+                                    result = base_url + content[0]
     return result
+
+
 
 
 def get_cloudhole_key():
@@ -310,6 +330,21 @@ def get_cloudhole_clearance(cloudhole_key=None):
             _log_debug("CloudHole error: %s" % repr(e))
             pass
     return clearance, user_agent
+
+
+# noinspection PyBroadException
+def normalize_string(name):
+    from unicodedata import normalize
+    import types
+    try:
+        normalize_name = name.decode('unicode-escape').encode('latin-1')
+    except:
+        if types.StringType == type(name):
+            unicode_name = unicode(name, 'utf-8', 'ignore')
+        else:
+            unicode_name = name
+        normalize_name = normalize('NFKD', unicode_name).encode('ascii', 'ignore')
+    return normalize_name
 
 
 class Magnet:

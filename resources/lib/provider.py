@@ -180,57 +180,6 @@ def clean_magnet(magnet="", info_hash=""):
     return magnet
 
 
-def get_playable_link(page=''):
-    """
-    Get playable link from a web page
-    :param page: URL address of the web page
-    :type page: str
-    :return: encode link to play video
-    """
-    page = normalize_string(page)
-    exceptions_list = Storage.open("exceptions")
-    result = page
-    logger.log.debug(result)
-    if 'divxatope' in page:
-        page = page.replace('/descargar/', '/torrent/')
-        result = page
-    is_link = True
-    logger.log.debug(exceptions_list.items())
-    if exceptions_list.has(result):
-        return page
-    if page.startswith("http") and is_link:
-        # exceptions
-        logger.log.debug(result)
-        # download page
-        try:
-            Browser.open(page)
-            data = normalize_string(Browser.content)
-            logger.log.debug(Browser.headers)
-            if 'text/html' in Browser.headers.get("content-type", ""):
-                content = re.findall('magnet:\?[^\'"\s<>\[\]]+', data)
-                if content is not None and len(content) > 0:
-                    result = content[0]
-                else:
-                    content = re.findall('/download\?token=[A-Za-z0-9%]+', data)
-                    if content is not None and len(content) > 0:
-                        result = Settings["url_address"] + content[0]
-                    else:
-                        content = re.findall('/telechargement/[a-z0-9-_.]+', data)  # cpasbien
-                        if content is not None and len(content) > 0:
-                            result = Settings["url_address"] + content[0]
-                        else:
-                            content = re.findall('https?:[^\'"\s<>\[\]]+torrent', data)
-                            if content is not None and len(content) > 0:
-                                result = content[0]
-            else:
-                exceptions_list.add(re.search("^https?://(.*?)/", page).group(1))
-                exceptions_list.sync()
-        except Exception as e:
-            logger.log.error("Error getting playable link: %s" % repr(e))
-            pass
-    return quote_plus(result)
-
-
 def parse_json(data):
     """
     Createa json from string

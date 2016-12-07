@@ -1,3 +1,4 @@
+v0.9.27 t411 support
 v0.9.26 timeout Magnetizer
 v0.9.25 addon.xml
 v0.9.21 Quasar-Magnetizer
