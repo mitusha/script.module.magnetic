@@ -18,7 +18,7 @@ from urlparse import urlparse
 
 import xbmcaddon
 
-from browser import Browser
+from browser import Browser, normalize_string
 from ehp import *
 from storage import *
 from utils import PROVIDER_SERVICE_HOST, PROVIDER_SERVICE_PORT
@@ -476,29 +476,6 @@ class Filtering:
             res = True
         return res
 
-    # noinspection PyBroadException
-    @staticmethod
-    def normalize_string(name=None):
-        """
-        Convert any type of string to latin-1 encoding
-        :param name: string to convert
-        :type name: str
-        :return: converter string
-        """
-        if name:
-            from unicodedata import normalize
-            import types
-            try:
-                normalize_name = name.decode('unicode-escape').encode('latin-1')
-            except:
-                if types.StringType == type(name):
-                    unicode_name = unicode(name, 'utf-8', 'ignore')
-                else:
-                    unicode_name = name
-                normalize_name = normalize('NFKD', unicode_name).encode('ascii', 'ignore')
-            return normalize_name
-        return ''
-
     @staticmethod
     def un_code_name(name):
         """
@@ -533,10 +510,10 @@ class Filtering:
         :type value: str
         :return: converted string
         """
-        value = cls.normalize_string(value)  # First normalization
+        value = normalize_string(value)  # First normalization
         value = cls.unquote_name(value)
         value = cls.un_code_name(value)
-        value = cls.normalize_string(
+        value = normalize_string(
             value)  # Last normalization, because some unicode char could appear from the previous steps
         value = value.lower().title()
         keys = {'"': ' ', '*': ' ', '/': ' ', ':': ' ', '<': ' ', '>': ' ', '?': ' ', '|': ' ', '_': ' ',
@@ -561,7 +538,7 @@ class Filtering:
             return False
         name = cls.safe_name(name)
         cls.title = cls.safe_name(cls.title) if cls.filter_title in 'true' else name
-        normalized_title = cls.normalize_string(cls.title)  # because sometimes there are missing accents in the results
+        normalized_title = normalize_string(cls.title)  # because sometimes there are missing accents in the results
         cls.reason = name.replace(' - ' + Settings.name_provider, '') + ' ***Blocked File by'
         list_to_verify = [cls.title, normalized_title] if cls.title != normalized_title else [cls.title]
         if cls.included(name, list_to_verify, True):

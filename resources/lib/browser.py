@@ -238,6 +238,8 @@ def read_torrent(uri=''):
     """
     result = ''
     link = get_links(uri)
+    if link.startswith('magnet'):
+        link = 'http://itorrents.org/torrent/%s.torrent' % Magnet(link).info_hash
     if len(link) > 0 and Browser.open(link):
         result = Browser.content
     return result
@@ -260,7 +262,7 @@ def get_links(uri=''):
             if 'text/html' in Browser.headers.get("content-type", ""):
                 content = re.findall('magnet:\?[^\'"\s<>\[\]]+', data)
                 if content is not None and len(content) > 0:
-                    result = 'http://itorrents.org/torrent/%s.torrent' % Magnet(content[0]).info_hash
+                    result = content[0]
                 else:
                     content = re.findall('http(.*?).torrent["\']', data)
                     if content is not None and len(content) > 0:

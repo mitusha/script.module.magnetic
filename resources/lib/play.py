@@ -6,17 +6,12 @@
 """
 Play a link from torrent or magnet
 """
-from json import loads
-from urllib2 import Request, urlopen
+from urllib import quote_plus
 
-import xbmcgui
-
+import logger
+from browser import get_links
 from dialog_select import DialogSelect
-from provider import *
-from utils import string
-
-ADDON = xbmcaddon.Addon()
-ADDON_PATH = ADDON.getAddonInfo("path")
+from utils import *
 
 
 def play(magnet):
@@ -26,7 +21,7 @@ def play(magnet):
     :type magnet: str
     """
     plugin = get_setting('plugin')
-    uri_string = get_playable_link(magnet)
+    uri_string = quote_plus(get_links(magnet))
     if plugin == 'Quasar':
         link = 'plugin://plugin.video.quasar/play?uri=%s' % uri_string
 
@@ -103,59 +98,3 @@ def search(info=None):
         del window
         if selection > -1:
             play(items[selection]['uri'])
-
-
-def get_playable_link(page=''):
-    """
-    Get playable link from a web page
-    :param page: URL address of the web page
-    :type page: str
-    :return: encode link to play video
-    """
-    page = normalize_string(page)
-    exceptions_list = Storage.open("exceptions")
-    result = page
-    logger.log.debug(result)
-    if 'divxatope' in page:
-        page = page.replace('/descargar/', '/torrent/')
-        result = page
-    is_link = True
-    logger.log.debug(exceptions_list.items())
-    if exceptions_list.has(result):
-        return page
-    if page.startswith("http") and is_link:
-        # exceptions
-        logger.log.debug(result)
-        # download page
-        try:
-            Browser.open(page)
-            data = normalize_string(Browser.content)
-            logger.log.debug(Browser.headers)
-            if 'text/html' in Browser.headers.get("content-type", ""):
-                content = re.findall('magnet:\?[^\'"\s<>\[\]]+', data)
-                if content is not None and len(content) > 0:
-                    result = content[0]
-                else:
-                    content = re.findall('/download\?token=[A-Za-z0-9%]+', data)
-                    if content is not None and len(content) > 0:
-                        result = Settings["url_address"] + content[0]
-                    else:
-                        content = re.findall('/telechargement/[a-z0-9-_.]+', data)  # cpasbien
-                        if content is not None and len(content) > 0:
-                            result = Settings["url_address"] + content[0]
-                        else:
-                            content = re.findall('/torrents/download/\?id=[a-z0-9-_.]+', data)  # t411
-                            if content is not None and len(content) > 0:
-                                result = Settings["url_address"] + content[0]
-                            else:
-                                content = re.findall('https?:[^\'"\s<>\[\]]+torrent', data)
-                                if content is not None and len(content) > 0:
-                                    result = content[0]
-                                    result = result.replace('torcache.net', 'itorrents.org')
-            else:
-                exceptions_list.add(re.search("^https?://(.*?)/", page).group(1))
-                exceptions_list.sync()
-        except Exception as e:
-            logger.log.error("Error getting playable link: %s" % repr(e))
-            pass
-    return quote_plus(result)
