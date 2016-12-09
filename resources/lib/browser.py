@@ -239,7 +239,7 @@ def read_torrent(uri=''):
     result = ''
     link = get_links(uri)
     if link.startswith('magnet'):
-        link = 'http://reflektor.karmorra.info/torrent/%s.torrent' % Magnet(link).info_hash
+        link = 'http://itorrents.org/torrent/%s.torrent' % Magnet(link).info_hash
     if len(link) > 0 and Browser.open(link):
         result = Browser.content
     return result

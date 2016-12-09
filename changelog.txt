@@ -1,3 +1,4 @@
+v0.9.30 itorrents.org
 v0.9.29 infoLabels
 v0.9.28 merging get_links method
 v0.9.27 t411 support
