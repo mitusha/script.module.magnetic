@@ -239,7 +239,7 @@ def read_torrent(uri=''):
     result = ''
     link = get_links(uri)
     if link.startswith('magnet'):
-        link = 'http://itorrents.org/torrent/%s.torrent' % Magnet(link).info_hash
+        link = 'http://reflektor.karmorra.info/torrent/%s.torrent' % Magnet(link).info_hash
     if len(link) > 0 and Browser.open(link):
         result = Browser.content
     return result
@@ -267,7 +267,7 @@ def get_links(uri=''):
                     content = re.findall('http(.*?).torrent["\']', data)
                     if content is not None and len(content) > 0:
                         result = 'http' + content[0] + '.torrent'
-                        result = result.replace('torcache.net', 'itorrents.org')
+                        result = result.replace('torcache.net', 'reflektor.karmorra.info')
                     else:
                         content = re.findall('/download\?token=[A-Za-z0-9%]+', data)
                         if content is not None and len(content) > 0:

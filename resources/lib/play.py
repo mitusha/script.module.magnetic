@@ -11,6 +11,7 @@ from urllib import quote_plus
 import logger
 from browser import get_links
 from dialog_select import DialogSelect
+from storage import Storage
 from utils import *
 
 
@@ -21,7 +22,8 @@ def play(magnet):
     :type magnet: str
     """
     plugin = get_setting('plugin')
-    uri_string = quote_plus(get_links(magnet))
+    filename = get_links(magnet)
+    uri_string = quote_plus(filename)
     if plugin == 'Quasar':
         link = 'plugin://plugin.video.quasar/play?uri=%s' % uri_string
 
@@ -42,8 +44,17 @@ def play(magnet):
         link = 'plugin://plugin.video.xbmctorrent/play/%s' % uri_string
 
     # play media
-    xbmc.executebuiltin("PlayMedia(%s)" % link)
-    xbmc.executebuiltin('Dialog.Close(all, true)')
+    magnetizer = Storage.open("magnetizer")
+    if 'info' in magnetizer:
+        info = magnetizer['info']
+        info['FileName'] = filename
+        list_item = xbmcgui.ListItem(info["Title"])
+        list_item.setInfo('video', info)
+        xbmc.Player().play(link, list_item, False)
+        # player.setSubtitles(MainURL + srt)
+    else:
+        xbmc.executebuiltin("PlayMedia(%s)" % link)
+        xbmc.executebuiltin('Dialog.Close(all, true)')
 
 
 def search(info=None):
